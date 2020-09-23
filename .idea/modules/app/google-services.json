@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "805521670223",
+    "firebase_url": "https://tagmuh-ios.firebaseio.com",
+    "project_id": "tagmuh-ios",
+    "storage_bucket": "tagmuh-ios.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805521670223:android:e32fbe95187e19bbf8aa3a",
+        "android_client_info": {
+          "package_name": "com.sean.TagMuh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "805521670223-u0d3eh2qbbkb39ci13cke2g5musou6mn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sean.TagMuh",
+            "certificate_hash": "995211d594177dcb23a1da486f757ef5a927a4c4"
+          }
+        },
+        {
+          "client_id": "805521670223-0mhg74ckjaprsvt3jagk0p4qaoatj454.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ_nIPo46N3TYQrOuicvGFGl0uZi3KC8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805521670223-0mhg74ckjaprsvt3jagk0p4qaoatj454.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "805521670223-3g6oq0kn8sc9hhd94b8hkkrnb0fichku.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sean.TagMuh"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
