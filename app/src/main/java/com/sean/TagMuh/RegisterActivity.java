@@ -50,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
         mauth=FirebaseAuth.getInstance();
         mDatabase=FirebaseDatabase.getInstance().getReference().child("users");
 
+
     }
 
     //-----REGISTER BUTTON IS PRESSED---

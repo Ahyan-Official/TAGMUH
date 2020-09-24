@@ -9,11 +9,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreatePostActivity"></activity>
+        <activity android:name=".SellerProfilePublicActivity"></activity>
+        <activity android:name=".SellerProfileActivity" />
+        <activity android:name=".CreatePostActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".EditAdActivity" />
-        <activity android:name=".MyAdsActivity" />
-        <activity android:name=".CompleteSignupActivity" />
+        <activity
+            android:name=".MyAdsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity android:name=".CompleteSignupActivity" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".AdViewActivity" />
         <activity
             android:name=".ContactDetailActivity"
@@ -46,13 +64,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppThemeNoActionBar" />
     </application>
 
 </manifest>

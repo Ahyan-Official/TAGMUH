@@ -8,8 +8,12 @@
 
 
 
+    <include layout="@layout/toolbar_createpost"
+        android:id="@+id/toolbar"/>
+
 
     <ScrollView
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -36,11 +40,6 @@
 
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select Category"/>
-
 
 
             <EditText
@@ -49,6 +48,17 @@
                 android:hint="Title"
                 android:textSize="@dimen/_15sdp"
                 android:id="@+id/etTitle"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Category"/>
+            <Spinner
+                android:id = "@+id/spinner"
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:prompt = "@string/app_name"
+                />
+
 
             <EditText
                 android:layout_width="match_parent"
