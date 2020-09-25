@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,11 +39,13 @@ public class CompleteSignupActivity extends AppCompatActivity {
 
     TextInputLayout etFN,etLN,etGL,etPN,etDes;
     String email, password;
-
+    Button btnNext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_signup);
+
+
 
 
         if(getIntent()!=null){
@@ -63,18 +68,15 @@ public class CompleteSignupActivity extends AppCompatActivity {
         etGL=(TextInputLayout)findViewById(R.id.etGL);
         etPN =(TextInputLayout)findViewById(R.id.etPN);
         etDes=(TextInputLayout)findViewById(R.id.etDes);
+        btnNext = (Button) findViewById(R.id.btnNext);
 
 
 
-        etdisplayname=(TextInputLayout)findViewById(R.id.editText3);
-        etemail=(TextInputLayout)findViewById(R.id.editText4);
-        etpassword=(TextInputLayout)findViewById(R.id.editText5);
         buttonsubmit=(Button)findViewById(R.id.button3);
         progressDialog=new ProgressDialog(CompleteSignupActivity.this);
         mauth=FirebaseAuth.getInstance();
 
 
-        mDatabase= FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child("/(id)");
 
 
         //Database.database().reference().child("Servicer").child("Users").child("\(id)").setValue(["email": "\(self.email)", "firstName": self.firstNameText.text!, "lastName": self.lastNameText.text!, "location": self.stateText.text!, "phoneNumber": self.phoneNumberText.text!, "description": self.descriptionText.text!, "profileImg": "No Image"]) { (error, db_ref) in
@@ -118,6 +120,11 @@ public class CompleteSignupActivity extends AppCompatActivity {
     //-----REGISTERING THE NEW USER------
     private void register_user(final String FN, final String LN, final String GL, final String PN, final String des, final String email, String password) {
 
+
+        final String uuid = UUID.randomUUID().toString().toUpperCase();
+
+        mDatabase= FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(uuid);
+
         mauth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -125,11 +132,9 @@ public class CompleteSignupActivity extends AppCompatActivity {
                 //------IF USER IS SUCCESSFULLY REGISTERED-----
                 if(task.isSuccessful()){
 
-                    String uniqueId = UUID.randomUUID().toString().toUpperCase();
-                    Log.e("uuid",uniqueId+"sss");
+                    Log.e("uuid",uuid);
                     FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                     //final String uid=current_user.getUid();
-                    String token_id = FirebaseInstanceId.getInstance().getToken();
                     Map userMap=new HashMap();
                     userMap.put("description",des);
                     userMap.put("email",email);
@@ -139,10 +144,17 @@ public class CompleteSignupActivity extends AppCompatActivity {
                     userMap.put("phoneNumber",PN);
                     userMap.put("profileImage","No Image");
 
-                    mDatabase.child(uniqueId).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mDatabase.child(uuid).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task1) {
                             if(task1.isSuccessful()){
+
+
+
+                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("UUID",uuid);
+                                editor.apply();
 
                                 progressDialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "New User is created", Toast.LENGTH_SHORT).show();

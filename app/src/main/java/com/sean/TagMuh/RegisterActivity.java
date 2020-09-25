@@ -2,6 +2,9 @@ package com.sean.TagMuh;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 
@@ -10,9 +13,14 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,14 +34,25 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
     FirebaseAuth mauth;
-    TextInputLayout etdisplayname,etemail,etpassword;
+    TextInputLayout etEmail,etP,etPN;
     Button buttonsubmit;
     ProgressDialog progressDialog;
     private DatabaseReference mDatabase;
+
+    TextView tvLogin;
+
+    boolean seller = true;
+    boolean buyer = false;
+
+
+    TextView tvSeller,tvBuyer;
+    ImageView lineSeller,lineBuyer;
+    CardView cdBuyer,cdSeller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +60,95 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         //this.setTitle("Register");
 
-        etdisplayname=(TextInputLayout)findViewById(R.id.editText3);
-        etemail=(TextInputLayout)findViewById(R.id.editText4);
-        etpassword=(TextInputLayout)findViewById(R.id.editText5);
+        etEmail=(TextInputLayout)findViewById(R.id.etEmail);
+        etP=(TextInputLayout)findViewById(R.id.etP);
+        etPN=(TextInputLayout)findViewById(R.id.etPN);
+
+
+        tvSeller=(TextView) findViewById(R.id.tvSeller);
+        tvBuyer=(TextView)findViewById(R.id.tvBuyer);
+
+        cdBuyer=(CardView) findViewById(R.id.cdBuyer);
+        cdSeller=(CardView)findViewById(R.id.cdSeller);
+
+
+        lineSeller=(ImageView)findViewById(R.id.lineSeller);
+        lineBuyer=(ImageView)findViewById(R.id.lineBuyer);
+
+
         buttonsubmit=(Button)findViewById(R.id.button3);
         progressDialog=new ProgressDialog(RegisterActivity.this);
 
         mauth=FirebaseAuth.getInstance();
-        mDatabase=FirebaseDatabase.getInstance().getReference().child("users");
+
+
+        tvLogin=(TextView) findViewById(R.id.tvLogin);
+
+
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                Intent intent=new Intent(RegisterActivity.this,LoginActivity.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+
+
+
+
+        cdBuyer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                buyer = true;
+                seller = false;
+
+
+                tvSeller.setTextColor(Color.parseColor("#d2d2d2"));
+                lineSeller.setBackgroundColor(Color.parseColor("#d2d2d2"));
+
+
+                tvBuyer.setTextColor(Color.parseColor("#646464"));
+                lineBuyer.setBackgroundColor(Color.parseColor("#67cc97"));
+
+
+
+
+
+            }
+        });
+
+        cdSeller.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+
+                buyer = false;
+                seller = true;
+
+                tvBuyer.setTextColor(Color.parseColor("#d2d2d2"));
+                lineBuyer.setBackgroundColor(Color.parseColor("#d2d2d2"));
+
+
+                tvSeller.setTextColor(Color.parseColor("#646464"));
+                lineSeller.setBackgroundColor(Color.parseColor("#67cc97"));
+
+
+
+
+            }
+        });
 
 
     }
@@ -58,38 +158,71 @@ public class RegisterActivity extends AppCompatActivity {
 
         if(view.getId()==R.id.button3){
 
-            String displayname=etdisplayname.getEditText().getText().toString().trim();
-            String email=etemail.getEditText().getText().toString().trim();
-            String password=etpassword.getEditText().getText().toString().trim();
+            String email =etEmail.getEditText().getText().toString().trim();
+            String password=etP.getEditText().getText().toString().trim();
+            String conPassword=etPN.getEditText().getText().toString().trim();
 
-            //----CHECKING THE EMPTINESS OF THE EDITTEXT-----
-            if(displayname.equals("")){
-                Toast.makeText(RegisterActivity.this, "Please Fill the name", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
-            if(email.equals("")){
+            if(!email.equals("")){
+
+
+                if(etP.equals(etPN)){
+
+
+
+                    if(seller){
+
+                        Intent intent=new Intent(RegisterActivity.this,CompleteSignupActivity.class);
+                        startActivity(intent);
+
+                    }else if(buyer){
+
+
+
+                        progressDialog.setTitle("Registering User");
+                        progressDialog.setMessage("Please wait while we are creating your account... ");
+                        progressDialog.setCancelable(false);
+                        progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.show();
+                        register_user(email,password);
+
+
+
+                    }
+
+
+
+
+
+
+
+                }else{
+
+                    Toast.makeText(RegisterActivity.this, "Password Don't match", Toast.LENGTH_SHORT).show();
+
+
+                }
+
+
+            }else{
+
                 Toast.makeText(RegisterActivity.this, "Please Fill the email", Toast.LENGTH_SHORT).show();
-                return ;
+
+
             }
 
-            if(password.length()<6){
-                Toast.makeText(RegisterActivity.this, "Password is too short", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
-            progressDialog.setTitle("Registering User");
-            progressDialog.setMessage("Please wait while we are creating your account... ");
-            progressDialog.setCancelable(false);
-            progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
-            progressDialog.show();
-            register_user(displayname,email,password);
+
         }
     }
 
 
-    //-----REGISTERING THE NEW USER------
-    private void register_user(final String displayname, String email, String password) {
+    private void register_user(final String email, final String password) {
+
+
+        final String uuid = UUID.randomUUID().toString().toUpperCase();
+
+        mDatabase= FirebaseDatabase.getInstance().getReference().child("Customer").child("Users").child(uuid);
 
         mauth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
             @Override
@@ -98,21 +231,29 @@ public class RegisterActivity extends AppCompatActivity {
                 //------IF USER IS SUCCESSFULLY REGISTERED-----
                 if(task.isSuccessful()){
 
-                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-                    final String uid=current_user.getUid();
-                    String token_id = FirebaseInstanceId.getInstance().getToken();
-                    Map userMap=new HashMap();
-                    userMap.put("device_token",token_id);
-                    userMap.put("name",displayname);
-                    userMap.put("status","Hello ");
-                    userMap.put("image","default");
-                    userMap.put("thumb_image","default");
-                    userMap.put("online","true");
 
-                    mDatabase.child(uid).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    String name = email.substring(0,email.indexOf("@"));
+
+
+                    Log.e("uuid",uuid);
+                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+                    Map userMap=new HashMap();
+                    userMap.put("email",email);
+                    userMap.put("name", name);
+                    userMap.put("profileImg","No Image");
+
+                    mDatabase.child(uuid).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task1) {
                             if(task1.isSuccessful()){
+
+
+
+                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("UUID",uuid);
+                                editor.apply();
 
                                 progressDialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "New User is created", Toast.LENGTH_SHORT).show();
@@ -145,4 +286,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    //-----REGISTERING THE NEW USER------
 }
