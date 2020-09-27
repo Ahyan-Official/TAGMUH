@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerView"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_below="@+id/toolbar"
         />
 
@@ -38,8 +38,8 @@
         android:visibility="visible"
         android:layout_gravity="bottom"
         android:elevation="0dp"
+        app:itemIconSize="@dimen/bottom_navigation_icon_size"
         app:labelVisibilityMode="unlabeled"
-
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

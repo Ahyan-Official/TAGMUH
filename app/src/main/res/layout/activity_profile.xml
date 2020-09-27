@@ -34,6 +34,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_gravity="center"
             app:riv_oval="true"
+            android:id="@+id/profile_im"
             android:src="@drawable/profile_im"
             android:layout_centerHorizontal="true"/>
 
@@ -49,23 +50,23 @@
             android:layout_marginLeft="@dimen/_30sdp"
             android:layout_marginRight="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             app:cardElevation="@dimen/_5sdp">
 
 
             <EditText
+                android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:inputType="none"
-                android:textAlignment="center"
-                android:textSize="@dimen/_15sdp"
                 android:background="@android:color/transparent"
-                android:text="Buyer"/>
+                android:inputType="none"
+                android:text="Buyer"
+                android:textStyle="bold"
 
-
-
+                android:textAlignment="center"
+                android:textSize="@dimen/_15sdp" />
 
 
         </androidx.cardview.widget.CardView>
@@ -74,7 +75,7 @@
             android:layout_height="@dimen/_60sdp"
             android:layout_marginLeft="@dimen/_30sdp"
             android:layout_marginRight="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             app:cardElevation="@dimen/_5sdp">
@@ -86,6 +87,8 @@
                 android:layout_gravity="center"
                 android:background="#fff"
                 android:textAllCaps="false"
+                android:id="@+id/btnEdit"
+                android:textSize="@dimen/_12sdp"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="Edit"/>
 

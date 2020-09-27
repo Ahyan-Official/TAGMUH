@@ -7,11 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -258,11 +265,86 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(buyer){
 
-                    Query query = mDatabaseReference.child("Customer").child("Users");
-//                    child("ItemName").orderByChild("name").equals(itemName
-                    query.equalTo("email","sadas").addListenerForSingleValueEvent(new ValueEventListener() {
+                    progressDialog.setTitle("Logging in");
+                    progressDialog.setMessage("Please wait while we are checking the credentials..");
+                    progressDialog.setCancelable(false);
+                    progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.show();
+
+
+                    mDatabaseReference.child("Customer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot data: dataSnapshot.getChildren()) {
+
+                                String uuid = data.getKey();
+                                Log.e("uuid",uuid);
+
+                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("UUID",uuid);
+                                editor.apply();
+
+                                progressDialog.dismiss();
+                                Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                intent.putExtra("uuid",uuid);
+
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+                }else if(seller){
+
+
+
+                    progressDialog.setTitle("Logging in");
+                    progressDialog.setMessage("Please wait while we are checking the credentials..");
+                    progressDialog.setCancelable(false);
+                    progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.show();
+
+                    mDatabaseReference.child("Servicer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot data: dataSnapshot.getChildren()) {
+
+                                String uuid = data.getKey();
+                                Log.e("uuid",uuid);
+
+                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("UUID",uuid);
+                                editor.apply();
+
+                                progressDialog.dismiss();
+                                Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                intent.putExtra("uuid",uuid);
+
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+
+
+
+
+                            }
 
                         }
 
@@ -272,11 +354,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
 
-                }else if(seller){
-
-
-
-
 
 
 
@@ -284,12 +361,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                progressDialog.setTitle("Logging in");
-                progressDialog.setMessage("Please wait while we are checking the credentials..");
-                progressDialog.setCancelable(false);
-                progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
-                progressDialog.show();
-                login_user(email,password);
+
                 break;
 
             case R.id.buttonRegister:
@@ -314,33 +386,32 @@ public class LoginActivity extends AppCompatActivity {
 
                         if(task.isSuccessful()){
 
-                            //---ADDING DEVICE TOKEN ID AND SET ONLINE TO BE TRUE---
-                            //---DEVICE TOKEN IS USED FOR SENDING NOTIFICATION----
-//                            String user_id=mauth.getCurrentUser().getUid();
-//                            String token_id= FirebaseInstanceId.getInstance().getToken();
-//                            Map addValue = new HashMap();
-//                            addValue.put("device_token",token_id);
-//                            addValue.put("online","true");
-//
-//                            //---IF UPDATE IS SUCCESSFULL , THEN OPEN MAIN ACTIVITY---
-//                            mDatabaseReference.child(user_id).updateChildren(addValue, new DatabaseReference.CompletionListener(){
-//
-//                                @Override
-//                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//
-//                                    if(databaseError==null){
-//
-//                                        //---OPENING MAIN ACTIVITY---
-//                                        Log.e("Login : ","Logged in Successfully" );
-//
-//                                    }
-//                                    else{
-//                                        Toast.makeText(LoginActivity.this, databaseError.toString()  , Toast.LENGTH_SHORT).show();
-//                                        Log.e("Error is : ",databaseError.toString());
-//
-//                                    }
-//                                }
-//                            });
+                            String user_id=mauth.getCurrentUser().getUid();
+                            String token_id= FirebaseInstanceId.getInstance().getToken();
+                            Map addValue = new HashMap();
+                            addValue.put("device_token",token_id);
+                            addValue.put("online","true");
+
+
+
+                            mDatabaseReference.child(user_id).updateChildren(addValue, new DatabaseReference.CompletionListener(){
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                                    if(databaseError==null){
+
+                                        //---OPENING MAIN ACTIVITY---
+                                        Log.e("Login : ","Logged in Successfully" );
+
+                                    }
+                                    else{
+                                        Toast.makeText(LoginActivity.this, databaseError.toString()  , Toast.LENGTH_SHORT).show();
+                                        Log.e("Error is : ",databaseError.toString());
+
+                                    }
+                                }
+                            });
 
 
                             Toast.makeText(getApplicationContext(), "Logged in Successfully", Toast.LENGTH_SHORT).show();

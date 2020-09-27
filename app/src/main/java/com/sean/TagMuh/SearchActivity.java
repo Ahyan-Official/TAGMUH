@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -49,10 +50,10 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
 
 
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.ads_2, R.color.gray);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_34, R.color.gray);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.contact_23, R.color.gray);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.profile, R.color.gray);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.bar_allad, R.color.gray);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_icon, R.color.gray);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.feed, R.color.gray);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.bar_profile, R.color.gray);
 //        int qq = getResources().getDimensionPixelSize(R.dimen._10sdp);
 //        int qqa = getResources().getDimensionPixelSize(R.dimen._11sdp);
 //
@@ -101,11 +102,14 @@ public class SearchActivity extends AppCompatActivity {
     public class AdsViewHolder extends RecyclerView.ViewHolder {
         public TextView txtTitle;
         public TextView txtDesc;
+        RelativeLayout rlAd;
 
         public AdsViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.tvTitle);
             txtDesc = itemView.findViewById(R.id.tvDec);
+            rlAd = itemView.findViewById(R.id.rlAd);
+
         }
 
         public void setTxtTitle(String string) {
@@ -143,6 +147,19 @@ public class SearchActivity extends AppCompatActivity {
             protected void onBindViewHolder(AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
+
+
+                holder.rlAd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        Intent intent = new Intent(SearchActivity.this,AdViewActivity.class);
+
+                        intent.putExtra("adId",getRef(position).getKey().toString());
+                        startActivity(intent);
+                    }
+                });
 
 
             }

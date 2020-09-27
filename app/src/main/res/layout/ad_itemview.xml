@@ -10,11 +10,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_10sdp">
+        android:id="@+id/rlAd"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        >
         <com.makeramen.roundedimageview.RoundedImageView
             android:layout_width="@dimen/_80sdp"
             android:layout_height="@dimen/_80sdp"
-            android:src="@drawable/profile_im"
+            android:src="@drawable/not_found"
             android:id="@+id/image"
             app:riv_corner_radius="@dimen/_9sdp"
             />
@@ -44,6 +49,37 @@
                 android:singleLine="true"
                 android:text="Description"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/rating"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:numStars="1"
+                    android:rating="1"
+                    android:stepSize="1"
+                    android:src="@drawable/star23"
+                    android:theme="@style/RatingBar"
+                    android:isIndicator="false" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#f1c40f"
+                    android:layout_marginLeft="@dimen/_2sdp"
+                    android:text="(N/A)"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvRatingCount"
+                    android:layout_marginLeft="@dimen/_2sdp"
+
+                    android:text="(0)"/>
+            </LinearLayout>
+
 
 
         </LinearLayout>
@@ -51,15 +87,13 @@
     </RelativeLayout>
 
 
-
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_1sdp"
-        android:layout_marginLeft="@dimen/_20sdp"
-        android:layout_marginRight="@dimen/_20sdp"
-        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_5sdp"
-        android:background="#9C9C9C"/>
+        android:background="#D1D1D1"/>
 
 
 

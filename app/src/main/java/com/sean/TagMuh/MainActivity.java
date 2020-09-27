@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
     ImageButton btnCross;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
 
 
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.ads_2, R.color.gray);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_34, R.color.gray);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.contact_23, R.color.gray);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.profile, R.color.gray);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.all_add_3, R.color.gray);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_icon, R.color.gray);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.feed, R.color.gray);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.bar_profile, R.color.gray);
 //        int qq = getResources().getDimensionPixelSize(R.dimen._10sdp);
 //        int qqa = getResources().getDimensionPixelSize(R.dimen._11sdp);
 //
@@ -136,11 +139,15 @@ public class MainActivity extends AppCompatActivity {
     public class AdsViewHolder extends RecyclerView.ViewHolder {
         public TextView txtTitle;
         public TextView txtDesc;
+        RelativeLayout rlAd;
+
 
         public AdsViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.tvTitle);
             txtDesc = itemView.findViewById(R.id.tvDec);
+            rlAd = itemView.findViewById(R.id.rlAd);
+
         }
 
         public void setTxtTitle(String string) {
@@ -151,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
         public void setTxtDesc(String string) {
             txtDesc.setText(string);
         }
+
+
     }
 
 
@@ -182,11 +191,24 @@ public class MainActivity extends AppCompatActivity {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
 
+                holder.rlAd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        Intent intent = new Intent(MainActivity.this,AdViewActivity.class);
+
+                        intent.putExtra("adId",getRef(position).getKey().toString());
+                        startActivity(intent);
+                    }
+                });
+
 
             }
 
         };
         recyclerView.setAdapter(adapter);
+
     }
 
 

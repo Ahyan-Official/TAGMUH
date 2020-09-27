@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -47,6 +48,7 @@ public class CreatePostActivity extends AppCompatActivity {
     String uid;
     byte[] thumb_bytes=null;
 
+
     //-------GETTING ITEM NO FOR IMAGE-------
     private static final int GALLERY_PICK = 1;
     private static final int GALLERY_PICK_2 = 2;
@@ -68,6 +70,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
 
 
+        mStorageReference = FirebaseStorage.getInstance().getReference();
 
 
 

@@ -46,13 +46,13 @@ public class ContactActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        setSupportActionBar(toolbar); 
+        setSupportActionBar(toolbar);
 
 
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.ads_2, R.color.gray);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_34, R.color.gray);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.contact_23, R.color.gray);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.profile, R.color.gray);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.bar_allad, R.color.gray);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("", R.drawable.search_icon, R.color.gray);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("", R.drawable.feed, R.color.gray);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem("", R.drawable.bar_profile, R.color.gray);
 //        int qq = getResources().getDimensionPixelSize(R.dimen._10sdp);
 //        int qqa = getResources().getDimensionPixelSize(R.dimen._11sdp);
 //

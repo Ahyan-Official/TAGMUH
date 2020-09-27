@@ -25,17 +25,23 @@
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_150sdp"
-                android:src="@drawable/profile_im"
+                android:src="@drawable/not_found"
+                android:scaleType="centerCrop"
+                android:background="@color/colorTransparent"
                 android:id="@+id/im1"/>
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_150sdp"
-                android:src="@drawable/profile_im"
+                android:src="@drawable/not_found"
+                android:scaleType="centerCrop"
+                android:background="@color/colorTransparent"
                 android:id="@+id/im2"/>
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_150sdp"
-                android:src="@drawable/profile_im"
+                android:src="@drawable/not_found"
+                android:scaleType="centerCrop"
+                android:background="@color/colorTransparent"
                 android:id="@+id/im3"/>
 
 
