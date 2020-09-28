@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     TextView forget;
 
-    boolean seller = false;
+    boolean seller = true;
     boolean buyer = false;
 
     TextView tvSignUp;
@@ -93,20 +93,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        //im =(ImageView) findViewById(R.id.im);
-
-
-        //setContentView(R.layout.activity_main);
-
-
-
-
-        //info = (TextView)findViewById(R.id.info);
-        //loginButton = (LoginButton)findViewById(R.id.login_button);
-
-
-
-        // If you are using in a fragment, call loginButton.setFragment(this);
 
 
 
@@ -218,6 +204,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+
+
+
     }
 
     @Override
@@ -228,18 +218,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    //----SHOWING ALERT DIALOG FOR EXITING THE APP----
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
-        builder.setMessage("Really Exit ??");
-        builder.setTitle("Exit");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Ok",new MyListener());
-        builder.setNegativeButton("Cancel",null);
-        builder.show();
-
+        finish();
     }
+
+
     public class MyListener implements DialogInterface.OnClickListener{
 
         @Override
@@ -255,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.btnLogin:
 
 
-                String email=emailTextInputLayout.getEditText().getText().toString().trim();
+                final String email=emailTextInputLayout.getEditText().getText().toString().trim();
                 String password=passTextInputLayout.getEditText().getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)||TextUtils.isEmpty(password)){
@@ -271,40 +255,63 @@ public class LoginActivity extends AppCompatActivity {
                     progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
                     progressDialog.show();
 
-
-                    mDatabaseReference.child("Customer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            for(DataSnapshot data: dataSnapshot.getChildren()) {
+                            if(task.isSuccessful()){
 
-                                String uuid = data.getKey();
-                                Log.e("uuid",uuid);
+                                mDatabaseReference.child("Customer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("UUID",uuid);
-                                editor.apply();
+                                        for(DataSnapshot data: dataSnapshot.getChildren()) {
 
-                                progressDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                                intent.putExtra("uuid",uuid);
+                                            String uuid = data.getKey();
+                                            Log.e("uuid",uuid);
 
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
+                                            SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = preferences.edit();
+                                            editor.putString("UUID",uuid);
+                                            editor.putString("type","buyer");
+                                            editor.apply();
+
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+                                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                            intent.putExtra("uuid",uuid);
+                                            intent.putExtra("type","buyer");
+
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            finish();
+
+
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                            }else{
+
+
+
+                                Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
 
 
 
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
                     });
+
 
 
 
@@ -318,41 +325,66 @@ public class LoginActivity extends AppCompatActivity {
                     progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
                     progressDialog.show();
 
-                    mDatabaseReference.child("Servicer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            for(DataSnapshot data: dataSnapshot.getChildren()) {
-
-                                String uuid = data.getKey();
-                                Log.e("uuid",uuid);
-
-                                SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("UUID",uuid);
-                                editor.apply();
-
-                                progressDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                                intent.putExtra("uuid",uuid);
-
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
 
 
+                                mDatabaseReference.child("Servicer").child("Users").orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        for(DataSnapshot data: dataSnapshot.getChildren()) {
+
+                                            String uuid = data.getKey();
+                                            Log.e("uuid",uuid);
+
+                                            SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = preferences.edit();
+                                            editor.putString("UUID",uuid);
+                                            editor.putString("type","seller");
+
+                                            editor.apply();
+
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+                                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                            intent.putExtra("uuid",uuid);
+                                            intent.putExtra("type","seller");
+
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            finish();
+
+
+
+
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }else{
+
+
+                                Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
 
 
                             }
 
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
                     });
+
+
+
 
 
 
@@ -430,6 +462,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private DatabaseReference mDatabase;
+
+
 
 
 

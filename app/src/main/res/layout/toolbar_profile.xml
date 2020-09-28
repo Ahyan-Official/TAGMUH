@@ -44,7 +44,7 @@
 
             android:visibility="visible"
             android:textSize="@dimen/_12sdp"
-            android:id="@+id/tvLogout"/>
+            android:id="@+id/imLogout"/>
 
 
 

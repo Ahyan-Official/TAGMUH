@@ -189,7 +189,6 @@
                     android:drawableTint="#FF4081"
                     android:hint="Password"
                     android:backgroundTint="#D1D1D1"
-
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -208,6 +207,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:passwordToggleEnabled="false"
                 android:id="@+id/etCP">
 
                 <EditText
@@ -215,9 +215,8 @@
                     android:layout_height="match_parent"
                     android:drawableTint="#FF4081"
                     android:backgroundTint="#D1D1D1"
-
                     android:hint="Confirm Password"
-                    android:inputType="text" />
+                    android:inputType="textPassword" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

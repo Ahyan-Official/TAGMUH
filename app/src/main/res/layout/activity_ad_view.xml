@@ -141,7 +141,6 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:textAllCaps="false"
                     android:background="@drawable/button_white"
-                    android:onClick="buttonIsClicked"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:text="TAGMUH"

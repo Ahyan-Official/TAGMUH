@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +30,10 @@ public class AdViewActivity extends AppCompatActivity {
 
     private FirebaseUser mFirebaseUser;
     Toolbar toolbar;
-
+    String servicerId;
     private DatabaseReference mDatabaseReference;
+    ImageButton imBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +54,7 @@ public class AdViewActivity extends AppCompatActivity {
         tvName = (TextView) findViewById(R.id.tvName);
         tvDes = (TextView) findViewById(R.id.tvDes);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
+        imBack = (ImageButton) findViewById(R.id.imBack);
 
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
@@ -63,9 +70,20 @@ public class AdViewActivity extends AppCompatActivity {
                     tvDes.setText(a.getAdDescription());
 
 
-                    String servicerId = a.getServicerId();
+                    servicerId = a.getServicerId();
+
+                    imProfile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
 
+                            //Toast.makeText(getApplicationContext(),servicerId+" ",Toast.LENGTH_SHORT).show();
+                            Intent intent=new Intent(AdViewActivity.this,SellerProfilePublicActivity.class);
+                            intent.putExtra("servicerId",servicerId);
+                            startActivity(intent);
+
+                        }
+                    });
                     mDatabaseReference.child("Users").child(servicerId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -92,6 +110,16 @@ public class AdViewActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+
+
+
+        imBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
             }
         });
 

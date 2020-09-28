@@ -32,11 +32,11 @@
 
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
             android:text="FILTER"
-            android:scaleType="fitXY"
-            android:src="@drawable/back"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back_icon"
             android:background="@color/colorTransparent"
             android:layout_alignParentLeft="true"
             android:layout_centerHorizontal="true"
@@ -48,7 +48,7 @@
 
             android:visibility="visible"
             android:textSize="@dimen/_12sdp"
-            android:id="@+id/tvFilter"/>
+            android:id="@+id/imback"/>
 
     </RelativeLayout>
 

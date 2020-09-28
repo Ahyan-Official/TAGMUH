@@ -38,6 +38,7 @@ public class MyAdsActivity extends AppCompatActivity {
     LinearLayoutManager linearLayoutManager;
 
     RecyclerView recyclerView;
+    ImageButton imback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class MyAdsActivity extends AppCompatActivity {
 
 
 
+        imback = (ImageButton) findViewById(R.id.imback);
 
 
 
@@ -66,6 +68,17 @@ public class MyAdsActivity extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+
+
+        imback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
+
+            }
+        });
+
 
         fetch();
 
@@ -109,7 +122,6 @@ public class MyAdsActivity extends AppCompatActivity {
 
     private void fetch() {
         Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
-
 
         FirebaseRecyclerOptions<Ads> options = new FirebaseRecyclerOptions.Builder<Ads>().setQuery(query, Ads.class).build();
 

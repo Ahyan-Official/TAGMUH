@@ -7,13 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +26,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -35,17 +40,24 @@ public class SearchActivity extends AppCompatActivity {
     LinearLayoutManager linearLayoutManager;
 
     RecyclerView recyclerView;
+    ClearableEditText tvSearch;
+    boolean search =false;
+
+    String uuid,type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
 
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        tvSearch = (ClearableEditText) findViewById(R.id.tvSearch);
 
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
 
@@ -87,10 +99,44 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        fetch();
+
+
+        tvSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
 
 
+
+
+                    String searchtext = tvSearch.getText().toString();
+
+
+                    if(searchtext!=null && !searchtext.isEmpty()){
+
+
+                        search = true;
+
+                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext).endAt(searchtext+ "\uf8ff");
+                        adapter = null;
+                        fetch(query);
+
+
+                    }
+
+
+
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+        fetch(query);
 
 
 
@@ -104,11 +150,14 @@ public class SearchActivity extends AppCompatActivity {
         public TextView txtDesc;
         RelativeLayout rlAd;
 
+        RoundedImageView image;
+
         public AdsViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.tvTitle);
             txtDesc = itemView.findViewById(R.id.tvDec);
             rlAd = itemView.findViewById(R.id.rlAd);
+            image = itemView.findViewById(R.id.image);
 
         }
 
@@ -126,8 +175,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
 
-    private void fetch() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+    private void fetch(Query query) {
 
 
         FirebaseRecyclerOptions<Ads> options = new FirebaseRecyclerOptions.Builder<Ads>().setQuery(query, Ads.class).build();
@@ -148,6 +196,9 @@ public class SearchActivity extends AppCompatActivity {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
 
+                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(holder.image);
+
+
 
                 holder.rlAd.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -166,6 +217,7 @@ public class SearchActivity extends AppCompatActivity {
 
         };
         recyclerView.setAdapter(adapter);
+        adapter.startListening();
     }
 
 
@@ -238,17 +290,35 @@ public class SearchActivity extends AppCompatActivity {
                     break;
 
                 case 3:
-                    Intent intent1 = new Intent(getApplicationContext(),ProfileActivity.class);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    if(type.equals("buyer")){
 
-                    overridePendingTransition(0,0);
+                        Intent intent3 = new Intent(getApplicationContext(),ProfileActivity.class);
 
-                    startActivity(intent1);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                        overridePendingTransition(0,0);
+                        startActivity(intent3);
+                    }else{
+
+                        Intent intent3 = new Intent(getApplicationContext(),SellerProfileActivity.class);
+
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                        overridePendingTransition(0,0);
+                        startActivity(intent3);
+
+                    }
+
 
                     break;
 
@@ -260,7 +330,18 @@ public class SearchActivity extends AppCompatActivity {
     };
 
 
+    @Override
+    public void onBackPressed() {
 
 
+        if(search){
 
+            Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+            fetch(query);
+
+        }else{
+            super.onBackPressed();
+
+        }
+    }
 }

@@ -62,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         etEmail=(TextInputLayout)findViewById(R.id.etEmail);
         etP=(TextInputLayout)findViewById(R.id.etP);
-        etPN=(TextInputLayout)findViewById(R.id.etPN);
+        etPN=(TextInputLayout)findViewById(R.id.etCP);
 
 
         tvSeller=(TextView) findViewById(R.id.tvSeller);
@@ -166,13 +166,15 @@ public class RegisterActivity extends AppCompatActivity {
             if(!email.equals("")){
 
 
-                if(etP.equals(etPN)){
+                if(etP.getEditText().getText().toString().equals(etPN.getEditText().getText().toString())){
 
 
 
                     if(seller){
 
                         Intent intent=new Intent(RegisterActivity.this,CompleteSignupActivity.class);
+                        intent.putExtra("email",email);
+                        intent.putExtra("password",password);
                         startActivity(intent);
 
                     }else if(buyer){
@@ -243,7 +245,7 @@ public class RegisterActivity extends AppCompatActivity {
                     userMap.put("name", name);
                     userMap.put("profileImg","No Image");
 
-                    mDatabase.child(uuid).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task1) {
                             if(task1.isSuccessful()){
@@ -253,13 +255,13 @@ public class RegisterActivity extends AppCompatActivity {
                                 SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = preferences.edit();
                                 editor.putString("UUID",uuid);
+                                editor.putString("type","buyer");
+
                                 editor.apply();
 
                                 progressDialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "New User is created", Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(RegisterActivity.this,MainActivity.class);
-
-                                //----REMOVING THE LOGIN ACTIVITY FROM THE QUEUE----
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();

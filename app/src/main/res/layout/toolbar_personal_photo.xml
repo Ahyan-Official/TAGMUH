@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ad Title"
+            android:text="Personal Photo"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:textColor="#FFFFFF"

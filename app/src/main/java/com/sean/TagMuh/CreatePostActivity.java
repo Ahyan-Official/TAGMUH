@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ public class CreatePostActivity extends AppCompatActivity {
     private static final int GALLERY_PICK = 1;
     private static final int GALLERY_PICK_2 = 2;
     private static final int GALLERY_PICK_3 = 3;
+
+    ImageButton imback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,13 +74,13 @@ public class CreatePostActivity extends AppCompatActivity {
 
 
         mStorageReference = FirebaseStorage.getInstance().getReference();
-
+        imback = (ImageButton) findViewById(R.id.imback);
 
 
 
         Spinner spinner = findViewById(R.id.spinner);
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("JAVA");
+        arrayList.add("Select Category");
         arrayList.add("ANDROID");
         arrayList.add("C Language");
         arrayList.add("CPP Language");
@@ -90,10 +93,19 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tutorialsName = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + tutorialsName,Toast.LENGTH_LONG).show();
+                //Toast.makeText(parent.getContext(), "Selected: " + tutorialsName,Toast.LENGTH_LONG).show();
             }
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
+            }
+        });
+
+        imback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
+
             }
         });
     }

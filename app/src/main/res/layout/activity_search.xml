@@ -33,7 +33,7 @@
         android:background="@drawable/search_bar"
         android:layout_marginBottom="@dimen/_4sdp"
         android:textSize="@dimen/_13sdp"
-        android:id="@+id/tvSearch1"/>
+        android:id="@+id/tvSearch"/>
 
 
 
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerView"
-        android:layout_below="@+id/tvSearch1"
+        android:layout_below="@+id/tvSearch"
         />
 
 

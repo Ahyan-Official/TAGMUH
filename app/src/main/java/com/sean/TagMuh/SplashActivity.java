@@ -10,9 +10,14 @@ import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+
 public class SplashActivity extends AppCompatActivity {
 
     VideoView videoView;
+    DatabaseReference databaseReference;
+    FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +40,10 @@ public class SplashActivity extends AppCompatActivity {
         videoView.start();
 
 
-//        int secondsDelayed = 1;
-//        new Handler().postDelayed(new Runnable() {
-//            public void run() {
-//                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                finish();
-//            }
-//        }, secondsDelayed * 2500);
+
+
+
+
 
 
     }

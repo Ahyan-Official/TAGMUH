@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,9 +31,12 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,9 +50,14 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     ListView listView;
-    String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
+    String countryList[] = {"All Ads", "Carpentry", "Delivery", "Electrical", "Graphics", "Maintenance", "Mobile Apps","Media", "Pumping","Plumbing","Photographer","Services","Septic","Tiling","Tractor","Trucking","Trash Removal","Voiceover","Website"};
     ImageButton btnCross;
 
+    RelativeLayout rlFilter;
+    TextView tvFilter;
+
+    FirebaseAuth mAuth;
+    String uuid,type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +65,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
+
+
 
         listView = (ListView)findViewById(R.id.listView);
-
+        tvFilter = (TextView) findViewById(R.id.tvFilter);
         btnCross = (ImageButton) findViewById(R.id.btnCross);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.ad_filter_view, R.id.btnItem, countryList);
         listView.setAdapter(arrayAdapter);
@@ -76,10 +90,34 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),btn.getText().toString(),Toast.LENGTH_SHORT).show();
             }
         });
+        rlFilter = (RelativeLayout) findViewById(R.id.rlFilter);
+
+        btnCross.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                rlFilter.setVisibility(View.GONE);
+            }
+        });
+        tvFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                rlFilter.setVisibility(View.VISIBLE);
+
+            }
+        });
 
 
 
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser()==null){
 
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+
+        }
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -140,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         public TextView txtTitle;
         public TextView txtDesc;
         RelativeLayout rlAd;
+        RoundedImageView image;
 
 
         public AdsViewHolder(View itemView) {
@@ -147,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
             txtTitle = itemView.findViewById(R.id.tvTitle);
             txtDesc = itemView.findViewById(R.id.tvDec);
             rlAd = itemView.findViewById(R.id.rlAd);
+            image = itemView.findViewById(R.id.image);
+
 
         }
 
@@ -190,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onBindViewHolder(AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
+                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(holder.image);
 
                 holder.rlAd.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -304,17 +346,37 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case 3:
-                    Intent intent3 = new Intent(getApplicationContext(),ProfileActivity.class);
 
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
-                    overridePendingTransition(0,0);
-                    startActivity(intent3);
+                    if(type.equals("buyer")){
+
+                        Intent intent3 = new Intent(getApplicationContext(),ProfileActivity.class);
+
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                        overridePendingTransition(0,0);
+                        startActivity(intent3);
+                    }else{
+
+                        Intent intent3 = new Intent(getApplicationContext(),SellerProfileActivity.class);
+
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                        overridePendingTransition(0,0);
+                        startActivity(intent3);
+
+                    }
+
 
                     break;
 

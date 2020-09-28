@@ -13,14 +13,7 @@
     <include layout="@layout/toolbar_34"
         android:id="@+id/toolbar"/>
 
-    <include layout="@layout/ad_filter_list"
-        android:id="@+id/Filter_popup"
-        android:visibility="gone"
-        android:layout_below="@+id/toolbar"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_margin="@dimen/_20sdp"
-        android:layout_above="@+id/bnve"/>
+
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -31,7 +24,12 @@
         android:layout_below="@+id/toolbar"
         />
 
-
+    <include layout="@layout/ad_filter_list"
+        android:visibility="gone"
+        android:layout_below="@+id/toolbar"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/bnve"/>
 
     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
         android:id="@+id/bnve"

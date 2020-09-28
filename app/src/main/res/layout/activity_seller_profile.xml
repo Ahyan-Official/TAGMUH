@@ -7,7 +7,7 @@
     tools:context=".SellerProfileActivity">
 
 
-    <include layout="@layout/toolbar_profile"
+    <include layout="@layout/toolbar_seller_profile"
         android:id="@+id/toolbar"/>
 
 
@@ -24,23 +24,106 @@
 
 
 
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_100sdp"
-            android:scaleType="centerCrop"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:layout_gravity="center"
-            app:riv_oval="true"
-            android:src="@drawable/profile_im"
-            android:layout_centerHorizontal="true"/>
+            android:layout_marginBottom="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:id="@+id/cdProfile"
+            app:cardElevation="@dimen/_5sdp">
 
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="center"
+                    app:riv_oval="true"
+                    android:id="@+id/profile_im"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/profile_im"
+                    android:layout_centerHorizontal="true"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/forward"
+                    android:layout_toEndOf="@+id/profile_im"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:inputType="none"
+                        android:gravity="start"
+                        android:id="@+id/tvName"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textAlignment="viewStart"
+                        android:textSize="@dimen/_15sdp"
+
+                        android:background="@android:color/transparent"
+                        android:text="Name"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:inputType="none"
+                        android:textColor="#B5B3B3"
+
+                        android:id="@+id/tvEmail"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textAlignment="viewStart"
+                        android:textSize="@dimen/_13sdp"
+                        android:background="@android:color/transparent"
+                        android:text="Email"/>
+
+
+                </LinearLayout>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/forward"
+                    android:id="@+id/forward"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/colorTransparent"/>
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </androidx.cardview.widget.CardView>
 
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60sdp"
-            android:layout_marginLeft="@dimen/_30sdp"
-            android:layout_marginRight="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_10sdp"
@@ -76,7 +159,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:inputType="none"
-                            android:textSize="@dimen/_15sdp"
+                            android:textStyle="bold"
+                            android:id="@+id/tvAdCount"
+                            android:textSize="@dimen/_17sdp"
                             android:background="@android:color/transparent"
                             android:text="1"/>
                         <TextView
@@ -84,10 +169,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:inputType="none"
-                            android:textSize="@dimen/_15sdp"
+                            android:textSize="@dimen/_13sdp"
+                            android:textColor="#B5B3B3"
                             android:background="@android:color/transparent"
                             android:text="Live Ads"/>
                     </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:src="#D1D1D1"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -107,15 +198,19 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:inputType="none"
-                                android:textSize="@dimen/_15sdp"
+                                android:textStyle="bold"
+                                android:id="@+id/tvRating"
+                                android:textSize="@dimen/_17sdp"
                                 android:background="@android:color/transparent"
                                 android:text="N/A"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
+                                android:textColor="#B5B3B3"
+
                                 android:inputType="none"
-                                android:textSize="@dimen/_15sdp"
+                                android:textSize="@dimen/_13sdp"
                                 android:background="@android:color/transparent"
                                 android:text="Rating"/>
                         </LinearLayout>
@@ -141,11 +236,12 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60sdp"
-            android:layout_marginLeft="@dimen/_30sdp"
-            android:layout_marginRight="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_10sdp"
+            android:id="@+id/cdCreatePost"
             app:cardElevation="@dimen/_5sdp">
 
 
@@ -184,14 +280,16 @@
 
 
         </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60sdp"
-            android:layout_marginLeft="@dimen/_30sdp"
-            android:layout_marginRight="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_10sdp"
+            android:id="@+id/cdMyAds"
             app:cardElevation="@dimen/_5sdp">
 
 

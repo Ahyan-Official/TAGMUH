@@ -90,7 +90,7 @@ public class CompleteSignupActivity extends AppCompatActivity {
     //-----REGISTER BUTTON IS PRESSED---
     public void buttonIsClicked(View view){
 
-        if(view.getId()==R.id.button3){
+        if(view.getId()==R.id.btnNext){
 
             String FN=etFN.getEditText().getText().toString().trim();
             String LN=etLN.getEditText().getText().toString().trim();
@@ -144,7 +144,7 @@ public class CompleteSignupActivity extends AppCompatActivity {
                     userMap.put("phoneNumber",PN);
                     userMap.put("profileImage","No Image");
 
-                    mDatabase.child(uuid).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task1) {
                             if(task1.isSuccessful()){
@@ -154,13 +154,13 @@ public class CompleteSignupActivity extends AppCompatActivity {
                                 SharedPreferences preferences = getSharedPreferences("UUID", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = preferences.edit();
                                 editor.putString("UUID",uuid);
+                                editor.putString("type","seller");
+
                                 editor.apply();
 
                                 progressDialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "New User is created", Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(CompleteSignupActivity.this,MainActivity.class);
-
-                                //----REMOVING THE LOGIN ACTIVITY FROM THE QUEUE----
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
