@@ -118,7 +118,7 @@ public class ContactActivity extends AppCompatActivity {
 //
 //        }
 
-        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts");
+        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").orderByChild("adsId").startAt(uuid).endAt(uuid+ "\uf8ff");
         fetch(query);
 
         //fetch();

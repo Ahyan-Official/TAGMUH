@@ -4,14 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +29,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
 public class AdViewActivity extends AppCompatActivity {
 
@@ -36,11 +48,21 @@ public class AdViewActivity extends AppCompatActivity {
     ImageButton imBack;
     TextView tvTitleToolbar;
     TextView tvLocation;
+    Button btnAddContact;
+    String uuid,type;
+    ImageView imForward,imBackward;
+    int count = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_view);
 
+
+
+
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,6 +83,12 @@ public class AdViewActivity extends AppCompatActivity {
         imBack = (ImageButton) findViewById(R.id.imBack);
         tvTitleToolbar = (TextView) findViewById(R.id.tvTitleToolbar);
         tvLocation = (TextView) findViewById(R.id.tvLocation);
+        btnAddContact = (Button) findViewById(R.id.btnAddContact);
+        imForward = (ImageView) findViewById(R.id.imForward);
+        imBackward = (ImageView) findViewById(R.id.imBackward);
+
+//        android:padding="@dimen/_20sdp"
+
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
         mDatabaseReference.child("Ads").child(adKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -68,7 +96,7 @@ public class AdViewActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.exists()){
-                    Ads a = dataSnapshot.getValue(Ads.class);
+                    final Ads a = dataSnapshot.getValue(Ads.class);
 
                     tvTitle.setText(a.getAdTitle());
                     tvTitleToolbar.setText(a.getAdTitle());
@@ -78,7 +106,78 @@ public class AdViewActivity extends AppCompatActivity {
                     servicerId = a.getServicerId();
 
 
-                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                    imForward.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            if(count>3 || count==0){
+
+                                count = 1;
+                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                count = count+1;
+
+                            }else{
+
+                                if (count==1){
+
+                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }else if (count==2){
+
+                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }else if (count==3){
+
+                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }
+                                count = count+1;
+
+                            }
+
+                            Log.e("countF",String.valueOf(count));
+
+
+
+
+                        }
+                    });
+                    imBackward.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if(count==0 || count>3){
+
+                                count = 1;
+                                //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                //count = count+1;
+                            }else{
+
+                                if (count==1){
+
+                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }else if (count==2){
+
+                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }else if (count==3){
+
+                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                }
+                                count = count-1;
+
+                            }
+
+                            Log.e("countb",String.valueOf(count));
+
+
+                        }
+                    });
+
+
 
                     imProfile.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -125,10 +224,185 @@ public class AdViewActivity extends AppCompatActivity {
         });
 
 
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Contacts");
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("adsId").startAt(adKey).endAt(adKey+ "\uf8ff");
+
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()){
+
+
+                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                             Contacts c = postSnapshot.getValue(Contacts.class);
+
+                        if(c.getCustomerId().equals(uuid)){
+
+                            Drawable d = getResources().getDrawable(R.drawable.button_disable);
+
+                            btnAddContact.setBackground(d);
+                            int margin = getResources().getDimensionPixelSize(R.dimen._20sdp);
+
+                            btnAddContact.setPadding(margin,margin,margin,margin);
+                            btnAddContact.setOnClickListener(null);
+                            btnAddContact.setEnabled(false);
+
+                        }else{
+
+
+                            btnAddContact.setClickable(true);
+
+                            btnAddContact.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    String n = tvName.getText().toString();
+                                    AlertDialog.Builder builder1 = new AlertDialog.Builder(AdViewActivity.this);
+                                    builder1.setMessage("Would you like to connect with "+n+" ?");
+                                    builder1.setCancelable(true);
+                                    builder1.setPositiveButton(
+                                            "Yes",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+
+                                                    final String uuidContact = UUID.randomUUID().toString().toUpperCase();
+
+                                                    Date currentTime = Calendar.getInstance().getTime();
+                                                    databaseReference.child(uuidContact).child("adsId").setValue(adKey);
+                                                    databaseReference.child(uuidContact).child("customerId").setValue(uuid);
+                                                    databaseReference.child(uuidContact).child("dateTime").setValue((int) (new Date().getTime()/1000));
+                                                    databaseReference.child(uuidContact).child("requestState").setValue("Accepted");
+                                                    databaseReference.child(uuidContact).child("servicerId").setValue(servicerId).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+
+                                                            Drawable d = getResources().getDrawable(R.drawable.button_disable);
+
+                                                            btnAddContact.setBackground(d);
+                                                            int margin = getResources().getDimensionPixelSize(R.dimen._20sdp);
+
+                                                            btnAddContact.setPadding(margin,margin,margin,margin);
+                                                            btnAddContact.setOnClickListener(null);
+                                                            btnAddContact.setOnClickListener(null);
+                                                            btnAddContact.setEnabled(false);
+                                                        }
+                                                    });
+
+                                                }
+                                            });
+
+                                    builder1.setNegativeButton(
+                                            "No",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+
+
+
+                                                }
+                                            });
+
+                                    AlertDialog alert11 = builder1.create();
+                                    alert11.show();
+
+
+                                }
+                            });
 
 
 
 
+
+
+                        }
+
+                    }
+
+
+
+
+
+
+
+
+
+                }else{
+
+                    btnAddContact.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            String n = tvName.getText().toString();
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(AdViewActivity.this);
+                            builder1.setMessage("Would you like to connect with "+n+" ?");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton(
+                                    "Yes",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+
+                                            final String uuidContact = UUID.randomUUID().toString().toUpperCase();
+
+                                            Date currentTime = Calendar.getInstance().getTime();
+                                            databaseReference.child(uuidContact).child("adsId").setValue(adKey);
+                                            databaseReference.child(uuidContact).child("customerId").setValue(uuid);
+                                            databaseReference.child(uuidContact).child("dateTime").setValue((int) (new Date().getTime()/1000));
+                                            databaseReference.child(uuidContact).child("requestState").setValue("Accepted");
+                                            databaseReference.child(uuidContact).child("servicerId").setValue(servicerId).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+
+                                                    Drawable d = getResources().getDrawable(R.drawable.button_disable);
+
+                                                    btnAddContact.setBackground(d);
+                                                    int margin = getResources().getDimensionPixelSize(R.dimen._20sdp);
+
+                                                    btnAddContact.setPadding(margin,margin,margin,margin);
+                                                    btnAddContact.setClickable(false);
+                                                    btnAddContact.setOnClickListener(null);
+                                                    btnAddContact.setEnabled(false);
+                                                }
+                                            });
+
+                                        }
+                                    });
+
+                            builder1.setNegativeButton(
+                                    "No",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+
+
+
+                                        }
+                                    });
+
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+
+
+                        }
+                    });
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
 

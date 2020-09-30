@@ -302,6 +302,7 @@ public class LoginActivity extends AppCompatActivity {
                             }else{
 
 
+                                progressDialog.dismiss();
 
                                 Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
 
@@ -373,6 +374,7 @@ public class LoginActivity extends AppCompatActivity {
                                 });
                             }else{
 
+                                progressDialog.dismiss();
 
                                 Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
 
