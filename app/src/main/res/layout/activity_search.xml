@@ -8,9 +8,6 @@
 
     tools:context=".SearchActivity">
 
-
-
-
     <include layout="@layout/toolbar_search"
         android:id="@+id/toolbar"/>
 
@@ -41,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerView"
+        android:layout_above="@+id/bnve"
         android:layout_below="@+id/tvSearch"
         />
 

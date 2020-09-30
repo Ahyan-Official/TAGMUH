@@ -85,9 +85,26 @@ public class MainActivity extends AppCompatActivity {
 
                 Button btn = view.findViewById(R.id.btnItem);
 
-                adapterView.getItemAtPosition(i);
+                rlFilter.setVisibility(View.GONE);
 
-                Toast.makeText(getApplicationContext(),btn.getText().toString(),Toast.LENGTH_SHORT).show();
+
+                if(btn.getText().toString().equals("All Ads")){
+
+
+                    Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+                    adapter = null;
+                    fetch(query);
+                }else{
+                    Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("category").startAt(btn.getText().toString()).endAt(btn.getText().toString()+ "\uf8ff");
+                    adapter = null;
+                    fetch(query);
+                }
+
+
+
+
+
+                //Toast.makeText(getApplicationContext(),btn.getText().toString(),Toast.LENGTH_SHORT).show();
             }
         });
         rlFilter = (RelativeLayout) findViewById(R.id.rlFilter);
@@ -116,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(MainActivity.this,LoginActivity.class);
             startActivity(intent);
-
+            finish();
         }
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -161,7 +178,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        fetch();
+        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+
+        fetch(query);
 
 
 
@@ -210,8 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void fetch() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+    private void fetch(Query query) {
 
 
         FirebaseRecyclerOptions<Ads> options = new FirebaseRecyclerOptions.Builder<Ads>().setQuery(query, Ads.class).build();
@@ -250,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
         };
         recyclerView.setAdapter(adapter);
-
+        adapter.startListening();
     }
 
 

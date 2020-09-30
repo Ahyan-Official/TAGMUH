@@ -2,29 +2,41 @@ package com.sean.TagMuh;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import id.zelory.compressor.Compressor;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class CreatePostActivity extends AppCompatActivity {
 
@@ -40,14 +53,12 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private FirebaseUser mFirebaseUser;
 
-    private DatabaseReference mDatabaseReference;
 
     private StorageReference mStorageReference;
     ProgressDialog mProgressDialog;
 
-    String status="";
-    String uid;
-    byte[] thumb_bytes=null;
+
+    String uuid,type;
 
 
     //-------GETTING ITEM NO FOR IMAGE-------
@@ -55,14 +66,24 @@ public class CreatePostActivity extends AppCompatActivity {
     private static final int GALLERY_PICK_2 = 2;
     private static final int GALLERY_PICK_3 = 3;
 
-    ImageButton imback;
+
+    ImageButton imback,im1,im2,im3;
+
+    String email;
+    Button btnUpload;
+    Uri resultUri,uri1,uri2,uri3;
+    DatabaseReference databaseReference;
+    String category;
+    String adUUID;
+
+    EditText etTitle,etDes;
+    String a = "https://firebasestorage.googleapis.com/v0/b/tagmuh-ios.appspot.com/o/Servicer%2FAds%2F584DF8BF-D725-4566-ADE3-7637BF887F37?alt=media&token=5a78637f-8b81-4a5b-9644-cae3ffbcc9ad";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
 
-        mProgressDialog=new ProgressDialog(this);
 
         mFirebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         //uid=mFirebaseUser.getUid();
@@ -70,35 +91,67 @@ public class CreatePostActivity extends AppCompatActivity {
         //mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(uid);
        // mDatabaseReference.keepSynced(true);
 
+        mProgressDialog=new ProgressDialog(this);
 
+
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
 
 
         mStorageReference = FirebaseStorage.getInstance().getReference();
         imback = (ImageButton) findViewById(R.id.imback);
 
+        etTitle = (EditText) findViewById(R.id.etTitle);
+        etDes = (EditText) findViewById(R.id.etDes);
 
+        im1 = (ImageButton) findViewById(R.id.im1);
+        im2 = (ImageButton) findViewById(R.id.im2);
+        im3 = (ImageButton) findViewById(R.id.im3);
+
+        btnUpload = (Button) findViewById(R.id.btnUpload);
+
+        adUUID = UUID.randomUUID().toString().toUpperCase();
+
+        mStorageReference = FirebaseStorage.getInstance().getReference();
 
         Spinner spinner = findViewById(R.id.spinner);
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Select Category");
-        arrayList.add("ANDROID");
-        arrayList.add("C Language");
-        arrayList.add("CPP Language");
-        arrayList.add("Go Language");
-        arrayList.add("AVN SYSTEMS");
+        arrayList.add("Carpentry");
+        arrayList.add("Delivery");
+        arrayList.add("Electrical");
+        arrayList.add("Graphics");
+        arrayList.add("Maintenance");
+        arrayList.add("Mobile Apps");
+        arrayList.add("Media");
+        arrayList.add("Pumping");
+        arrayList.add("Plumbing");
+        arrayList.add("Photographer");
+        arrayList.add("Services");
+        arrayList.add("Septic");
+        arrayList.add("Tiling");
+        arrayList.add("Tractor");
+        arrayList.add("Trucking");
+        arrayList.add("Trash Removal");
+        arrayList.add("Voiceover");
+        arrayList.add("Website");
+
+
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, arrayList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String tutorialsName = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(parent.getContext(), "Selected: " + tutorialsName,Toast.LENGTH_LONG).show();
+                category = parent.getItemAtPosition(position).toString();
             }
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
             }
         });
+
 
         imback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,49 +161,344 @@ public class CreatePostActivity extends AppCompatActivity {
 
             }
         });
-    }
 
 
 
-    View.OnClickListener ov = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").child(adUUID);
 
 
 
-            switch(view.getId()){
 
-                //------CHANGING IMAGE------
-                case R.id.im1:
+
+
+
+
+        im1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if (ActivityCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PICK);
+                } else {
 
                     Intent galleryIntent=new Intent();
                     galleryIntent.setType("image/*");
                     galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(galleryIntent,"Select Image"),GALLERY_PICK);
-                    break;
-                case R.id.im2:
 
-                    Intent galleryIntent2=new Intent();
-                    galleryIntent2.setType("image/*");
-                    galleryIntent2.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(galleryIntent2,"Select Image"),GALLERY_PICK_2);
-                    break;
-                case R.id.im3:
+                }
+            }
+        });
+        im2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    Intent galleryIntent3=new Intent();
-                    galleryIntent3.setType("image/*");
-                    galleryIntent3.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(galleryIntent3,"Select Image"),GALLERY_PICK_3);
-                    break;
 
-                default:
-                    break;
+                if (ActivityCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PICK);
+                } else {
+
+                    Intent galleryIntent=new Intent();
+                    galleryIntent.setType("image/*");
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(galleryIntent,"Select Image"),GALLERY_PICK_2);
+
+                }
+            }
+        });
+        im3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if (ActivityCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PICK);
+                } else {
+
+                    Intent galleryIntent=new Intent();
+                    galleryIntent.setType("image/*");
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(galleryIntent,"Select Image"),GALLERY_PICK_3);
+
+                }
+            }
+        });
+
+
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                if(etTitle.getText().toString().isEmpty() || etDes.getText().toString().isEmpty() || category.equals("Select Category")){
+
+                    Toast.makeText(getApplicationContext(),"Plz Fill details",Toast.LENGTH_SHORT).show();
+                }else{
+
+                    mProgressDialog.setTitle("Uploading Image");
+                    mProgressDialog.setMessage("Please wait while we process and upload the image...");
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                    mProgressDialog.show();
+
+                    if(uri1!=null || uri2!=null || uri3!=null){
+
+
+                        uploadIm1();
+
+
+
+
+                    }
+
+                    databaseReference.child("adTitle").setValue(etTitle.getText().toString());
+                    databaseReference.child("adDescription").setValue(etDes.getText().toString());
+                    databaseReference.child("servicerId").setValue(uuid);
+                }
+
+
+
+
+
 
             }
+        });
+
+    }
+
+
+
+    public void uploadIm1(){
+
+        if(uri1!=null){
+
+
+            String adstoreageUUID = UUID.randomUUID().toString().toUpperCase();
+
+            final StorageReference filepath=mStorageReference.child("Servicer").child("Ads").child(adstoreageUUID+".png");
+
+            //------STORING IMAGE IN FIREBASE STORAGE--------
+            filepath.putFile(uri1).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if(task.isSuccessful()){
+
+                        filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String downloadUrl = uri.toString();
+
+                                databaseReference.child("adImage1").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+
+                                        if(task.isSuccessful()){
+                                            uri1 = null;
+
+                                                uploadIm2();
+
+
+
+
+                                        }
+                                        else{
+                                            Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+
+
+                            }
+                        });
+
+
+
+
+
+
+
+
+
+                    }
+                    else{
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+
+            databaseReference.child("adImage1").setValue(a);
+
+                uploadIm2();
+
+
 
         }
-    };
 
+
+    }
+
+
+    public void uploadIm2(){
+
+        if(uri2!=null){
+
+
+            String adstoreageUUID = UUID.randomUUID().toString().toUpperCase();
+
+            final StorageReference filepath=mStorageReference.child("Servicer").child("Ads").child(adstoreageUUID+".png");
+
+            //------STORING IMAGE IN FIREBASE STORAGE--------
+            filepath.putFile(uri2).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if(task.isSuccessful()){
+
+                        filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String downloadUrl = uri.toString();
+
+                                databaseReference.child("adImage2").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+
+                                        if(task.isSuccessful()){
+                                            uri2 = null;
+
+                                                uploadIm3();
+
+
+
+                                        }
+                                        else{
+                                            Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+
+
+                            }
+                        });
+
+
+
+
+
+
+
+
+
+                    }
+                    else{
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+
+            databaseReference.child("adImage2").setValue(a);
+
+            uploadIm3();
+
+
+        }
+
+
+    }
+
+
+    public void uploadIm3(){
+
+        if(uri3!=null){
+
+
+            String adstoreageUUID = UUID.randomUUID().toString().toUpperCase();
+
+            final StorageReference filepath=mStorageReference.child("Servicer").child("Ads").child(adstoreageUUID+".png");
+
+            //------STORING IMAGE IN FIREBASE STORAGE--------
+            filepath.putFile(uri3).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if(task.isSuccessful()){
+
+                        filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String downloadUrl = uri.toString();
+
+                                databaseReference.child("adImage3").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+
+                                        if(task.isSuccessful()){
+
+
+                                            uri3 = null;
+
+                                            databaseReference.child("category").setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    mProgressDialog.dismiss();
+                                                }
+                                            });
+
+                                        }
+                                        else{
+                                            Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+
+
+                            }
+                        });
+
+
+
+
+
+
+
+
+
+                    }
+                    else{
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+            databaseReference.child("adImage3").setValue(a);
+
+
+            databaseReference.child("category").setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mProgressDialog.dismiss();
+                }
+            });
+        }
+
+
+    }
 
 
     @Override
@@ -161,13 +509,26 @@ public class CreatePostActivity extends AppCompatActivity {
         //-----STARTING GALLERY----
         if(requestCode == GALLERY_PICK && resultCode == RESULT_OK){
 
-            Uri sourceUri = data.getData();
+            uri1 = data.getData();
+            im1.setImageURI(uri1);
 
-            //-------CROPPING IMAGE AND SETTING MINIMUM SIZE TO 500 , 500------
-            CropImage.activity(sourceUri).
-                    setAspectRatio(1,1).
-                    setMinCropWindowSize(500,500).
-                    start(CreatePostActivity.this);
+
+
+        }
+        if(requestCode == GALLERY_PICK_2 && resultCode == RESULT_OK){
+
+            uri2 = data.getData();
+            im2.setImageURI(uri2);
+
+
+
+        }
+        if(requestCode == GALLERY_PICK_3 && resultCode == RESULT_OK){
+
+            uri3 = data.getData();
+
+            im3.setImageURI(uri3);
+
 
         }
 
@@ -179,97 +540,35 @@ public class CreatePostActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
 
-                mProgressDialog.setTitle("Uploading Image");
-                mProgressDialog.setMessage("Please wait while we process and upload the image...");
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
-                mProgressDialog.show();
 
 
-                Uri resultUri = result.getUri();
-                File thumb_filepath = new File(resultUri.getPath());
-                try {
 
-                    //--------COMPRESSING IMAGE--------
-                    Bitmap thumb_bitmap = new Compressor(this).
-                            setMaxWidth(200).
-                            setMaxHeight(200).
-                            setQuality(75).
-                            compressToBitmap(thumb_filepath);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    thumb_bytes= baos.toByteArray();
+                resultUri = result.getUri();
+                im1.setImageURI(resultUri);
 
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                StorageReference filepath=mStorageReference.child("profile_image").child(uid+".jpg");
-                final StorageReference thumb_file_path=mStorageReference.child("profile_image").child("thumbs").child(uid+".jpg");
-
-                //------STORING IMAGE IN FIREBASE STORAGE--------
-                filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                        if(task.isSuccessful()){
-
-                            @SuppressWarnings("VisibleForTests")
-                            final String downloadUrl=  task.getResult().getStorage().getDownloadUrl().toString();
-                            UploadTask uploadTask = thumb_file_path.putBytes(thumb_bytes);
-
-                            //---------- STORING THUMB IMAGE INTO STORAGE REFERENCE --------
-                            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> thumb_task) {
-                                    @SuppressWarnings("VisibleForTests")
-                                    String thumb_download_url=thumb_task.getResult().getStorage().getDownloadUrl().toString();
-                                    if(thumb_task.isSuccessful()){
-                                        Map update_HashMap=new HashMap();
-                                        update_HashMap.put("image",downloadUrl);
-                                        update_HashMap.put("thumb_image",thumb_download_url);
-
-                                        //--------ADDING URL INTO DATABASE REFERENCE--------
-                                        mDatabaseReference.updateChildren(update_HashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-
-                                                if(task.isSuccessful()){
-                                                    mProgressDialog.dismiss();
-                                                    Toast.makeText(CreatePostActivity.this, "Uploaded Successfuly...", Toast.LENGTH_SHORT).show();
-
-                                                }
-                                                else{
-                                                    mProgressDialog.dismiss();
-                                                    Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
-
-                                                }
-
-                                            }
-                                        });
-
-                                    }
-                                    else{
-                                        mProgressDialog.dismiss();
-                                        Toast.makeText(getApplicationContext(), " Error in uploading Thumbnail..", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
-
-                        }
-                        else{
-                            mProgressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), " Image is not uploading...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
 
                 Exception error = result.getError();
             }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
+    {
+        switch (requestCode) {
+            case GALLERY_PICK:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, GALLERY_PICK);
+                } else {
+                    //do something like displaying a message that he didn`t allow the app to access gallery and you wont be able to let him select from gallery
+                }
+                break;
         }
     }
 }

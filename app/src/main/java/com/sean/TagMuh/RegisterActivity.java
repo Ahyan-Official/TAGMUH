@@ -94,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 Intent intent=new Intent(RegisterActivity.this,LoginActivity.class);
                 startActivity(intent);
+                finish();
 
 
             }
@@ -289,6 +290,10 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 
     //-----REGISTERING THE NEW USER------
 }

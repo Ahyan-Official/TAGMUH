@@ -166,17 +166,16 @@ public class EditProfileActivity extends AppCompatActivity {
         Log.e("uuid",uuid);
         FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
         //final String uid=current_user.getUid();
-        Map userMap=new HashMap();
-        userMap.put("description",des);
-        userMap.put("firstName", FN);
-        userMap.put("lastName",LN);
-        userMap.put("location",GL);
-        userMap.put("phoneNumber",PN);
 
-        mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        mDatabase.child("description").setValue(des);
+        mDatabase.child("firstName").setValue(FN);
+        mDatabase.child("lastName").setValue(LN);
+        mDatabase.child("location").setValue(GL);
+        mDatabase.child("phoneNumber").setValue(PN).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task1) {
-                if(task1.isSuccessful()){
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
 
 
 
@@ -192,9 +191,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
                 }
-
             }
         });
+
+
 
     }
 }

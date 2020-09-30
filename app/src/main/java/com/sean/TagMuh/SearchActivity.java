@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -101,13 +103,53 @@ public class SearchActivity extends AppCompatActivity {
 
 
 
-        tvSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//        tvSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//
+//
+//
+//
+//
+//                    String searchtext = tvSearch.getText().toString();
+//
+//
+//                    if(searchtext!=null && !searchtext.isEmpty()){
+//
+//
+//                        search = true;
+//
+//                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext).endAt(searchtext+ "\uf8ff");
+//                        adapter = null;
+//                        fetch(query);
+//
+//
+//                    }
+//
+//
+//
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
+        tvSearch.addTextChangedListener(new TextWatcher() {
+
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            public void afterTextChanged(Editable s) {}
 
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
 
-
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length() != 0){
 
 
                     String searchtext = tvSearch.getText().toString();
@@ -124,16 +166,16 @@ public class SearchActivity extends AppCompatActivity {
 
 
                     }
+                }else {
 
+                    Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+                    adapter = null;
 
+                    fetch(query);
 
-
-                    return true;
                 }
-                return false;
             }
         });
-
 
         Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
         fetch(query);

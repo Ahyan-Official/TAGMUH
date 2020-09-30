@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
@@ -28,6 +29,7 @@ public class SellerProfilePublicActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     ImageView imHome;
     ImageButton imback;
+    DatabaseReference databaseReferenceAdCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,26 @@ public class SellerProfilePublicActivity extends AppCompatActivity {
 
 
                 }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        databaseReferenceAdCount = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+        Query query = databaseReferenceAdCount.orderByChild("servicerId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int a = (int)dataSnapshot.getChildrenCount();
+                tvAdCount.setText(String.valueOf(a));
 
 
             }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -34,7 +36,7 @@ public class SellerProfileActivity extends AppCompatActivity {
 
 
     RoundedImageView profile_im;
-    TextView tvName,tvEmail;
+    TextView tvName,tvEmail,tvAdCount;
     CardView cdProfile,cdCreatePost,cdMyAds;
     Toolbar toolbar;
     private StorageReference mStorageReference;
@@ -45,7 +47,8 @@ public class SellerProfileActivity extends AppCompatActivity {
     AHBottomNavigation bottomNavigation;
     String uuid,type;
 
-    ImageView imLogout;
+    ImageView imLogout,imUploadPhoto;
+    DatabaseReference databaseReferenceAdCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +70,12 @@ public class SellerProfileActivity extends AppCompatActivity {
         cdProfile = (CardView) findViewById(R.id.cdProfile);
         cdCreatePost = (CardView) findViewById(R.id.cdCreatePost);
         imLogout = (ImageView) findViewById(R.id.imLogout);
+        imUploadPhoto = (ImageView) findViewById(R.id.imUploadPhoto);
+
         tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
+        tvAdCount = (TextView) findViewById(R.id.tvAdCount);
+
         profile_im = (RoundedImageView) findViewById(R.id.profile_im);
 
 
@@ -113,7 +120,7 @@ public class SellerProfileActivity extends AppCompatActivity {
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(uuid);
 
-        mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -130,6 +137,25 @@ public class SellerProfileActivity extends AppCompatActivity {
 
             }
         });
+
+        databaseReferenceAdCount = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+        Query query = databaseReferenceAdCount.orderByChild("servicerId").startAt(uuid).endAt(uuid+ "\uf8ff");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int a = (int)dataSnapshot.getChildrenCount();
+                tvAdCount.setText(String.valueOf(a));
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
 
@@ -169,6 +195,15 @@ public class SellerProfileActivity extends AppCompatActivity {
                 startActivity(intent);
 
 
+
+            }
+        });
+        imUploadPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(SellerProfileActivity.this,UploadPersonalPhotoSellerActivity.class);
+                startActivity(intent);
 
             }
         });

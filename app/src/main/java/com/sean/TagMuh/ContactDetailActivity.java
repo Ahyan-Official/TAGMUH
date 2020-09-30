@@ -128,9 +128,7 @@ public class ContactDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                Intent intent = new Intent(ContactDetailActivity.this,ProfileActivity.class);
-                intent.putExtra("servicerId",servicerId);
-                startActivity(intent);
+                onBackPressed();
 
 
             }

@@ -30,7 +30,7 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             android:id="@+id/cdProfile"
             app:cardElevation="@dimen/_5sdp">
@@ -124,8 +124,8 @@
             android:layout_height="@dimen/_60sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             app:cardElevation="@dimen/_5sdp">
 
@@ -155,15 +155,15 @@
 
 
                         <TextView
+                            android:id="@+id/tvAdCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:inputType="none"
-                            android:textStyle="bold"
-                            android:id="@+id/tvAdCount"
-                            android:textSize="@dimen/_17sdp"
                             android:background="@android:color/transparent"
-                            android:text="1"/>
+                            android:inputType="none"
+                            android:text="0"
+                            android:textSize="@dimen/_17sdp"
+                            android:textStyle="bold" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -238,8 +238,8 @@
             android:layout_height="@dimen/_60sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             android:id="@+id/cdCreatePost"
             app:cardElevation="@dimen/_5sdp">
@@ -286,8 +286,8 @@
             android:layout_height="@dimen/_60sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             android:id="@+id/cdMyAds"
             app:cardElevation="@dimen/_5sdp">

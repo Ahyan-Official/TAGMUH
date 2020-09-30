@@ -3,13 +3,16 @@ package com.sean.TagMuh;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import id.zelory.compressor.Compressor;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -81,8 +84,8 @@ public class ProfileActivity extends AppCompatActivity {
         type = (shared.getString("type", ""));
 
 
-
         mProgressDialog=new ProgressDialog(this);
+
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -255,10 +258,18 @@ public class ProfileActivity extends AppCompatActivity {
 
                 if(editMode) {
 
-                    Intent galleryIntent=new Intent();
-                    galleryIntent.setType("image/*");
-                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(galleryIntent,"Select Image"),GALLERY_PICK);
+
+                    if (ActivityCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PICK);
+                    } else {
+
+                        Intent galleryIntent=new Intent();
+                        galleryIntent.setType("image/*");
+                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(galleryIntent,"Select Image"),GALLERY_PICK);
+
+                    }
+
 
 
 
@@ -293,8 +304,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 dialog.cancel();
                                 FirebaseAuth.getInstance().signOut();
                                 Intent intent=new Intent(ProfileActivity.this,LoginActivity.class);
-
-
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
@@ -503,6 +512,23 @@ public class ProfileActivity extends AppCompatActivity {
 
                 Exception error = result.getError();
             }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
+    {
+        switch (requestCode) {
+            case GALLERY_PICK:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, GALLERY_PICK);
+                } else {
+                    //do something like displaying a message that he didn`t allow the app to access gallery and you wont be able to let him select from gallery
+                }
+                break;
         }
     }
 }

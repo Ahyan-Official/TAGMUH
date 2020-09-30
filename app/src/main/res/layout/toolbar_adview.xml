@@ -16,9 +16,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ad Title"
+            android:singleLine="true"
+            android:layout_marginEnd="@dimen/_60sdp"
+            android:layout_marginLeft="@dimen/_60sdp"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
@@ -28,7 +31,7 @@
 
             android:visibility="visible"
             android:textSize="@dimen/_15sdp"
-            android:id="@+id/tv1"/>
+            android:id="@+id/tvTitleToolbar"/>
 
 
         <ImageButton

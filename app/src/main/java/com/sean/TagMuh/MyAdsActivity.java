@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class MyAdsActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ImageButton imback;
+    String uuid,type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,9 @@ public class MyAdsActivity extends AppCompatActivity {
 
         imback = (ImageButton) findViewById(R.id.imback);
 
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
 
 
 
@@ -96,11 +102,15 @@ public class MyAdsActivity extends AppCompatActivity {
     public class AdsViewHolder extends RecyclerView.ViewHolder {
         public TextView txtTitle;
         public TextView txtDesc;
+        RelativeLayout rlAd;
+
 
         public AdsViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.tvTitle);
             txtDesc = itemView.findViewById(R.id.tvDec);
+            rlAd = itemView.findViewById(R.id.rlAd);
+
         }
 
         public void setTxtTitle(String string) {
@@ -121,7 +131,10 @@ public class MyAdsActivity extends AppCompatActivity {
 
 
     private void fetch() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("servicerId").startAt(uuid).endAt(uuid+ "\uf8ff");
+
 
         FirebaseRecyclerOptions<Ads> options = new FirebaseRecyclerOptions.Builder<Ads>().setQuery(query, Ads.class).build();
 
@@ -140,6 +153,18 @@ public class MyAdsActivity extends AppCompatActivity {
             protected void onBindViewHolder(AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
+
+                holder.rlAd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        Intent intent = new Intent(MyAdsActivity.this,EditAdActivity.class);
+
+                        intent.putExtra("adId",getRef(position).getKey().toString());
+                        startActivity(intent);
+                    }
+                });
 
 
             }

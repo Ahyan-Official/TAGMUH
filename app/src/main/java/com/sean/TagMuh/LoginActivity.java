@@ -139,6 +139,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(intent);
+                finish();
 
 
             }
@@ -462,6 +463,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private DatabaseReference mDatabase;
+
 
 
 

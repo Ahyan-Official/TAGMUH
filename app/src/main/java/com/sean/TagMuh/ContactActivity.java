@@ -103,20 +103,23 @@ public class ContactActivity extends AppCompatActivity {
 
 
 
-        if(type.equals("buyer")){
+//        if(type.equals("buyer")){
+//
+//            Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").equalTo(uuid);
+//
+//            fetch(query);
+//
+//        }else{
+//
+//            Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("servicerId").equalTo(uuid);
+//            fetch(query);
+//
+//
+//
+//        }
 
-            Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").equalTo(uuid);
-
-            fetch(query);
-
-        }else{
-
-            Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("servicerId").equalTo(uuid);
-            fetch(query);
-
-
-
-        }
+        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts");
+        fetch(query);
 
         //fetch();
 
