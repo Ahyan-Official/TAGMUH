@@ -143,6 +143,7 @@ public class CompleteSignupActivity extends AppCompatActivity {
                     userMap.put("location",GL);
                     userMap.put("phoneNumber",PN);
                     userMap.put("profileImg","No Image");
+                    //sadasdasdasdasdasdasdasd
 
                     mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
