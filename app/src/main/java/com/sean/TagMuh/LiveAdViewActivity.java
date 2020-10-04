@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,21 +18,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
-public class EditAdActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
-
+public class LiveAdViewActivity extends AppCompatActivity {
 
     ImageView im;
+    TextView tvDes,tvTitle;
     String adKey;
 
     private FirebaseUser mFirebaseUser;
@@ -38,19 +46,25 @@ public class EditAdActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseReference;
     ImageButton imBack;
     TextView tvTitleToolbar;
-    TextInputLayout edTitle,etDes,etCategory;
-    Button btnDelete;
-    ProgressDialog progressDialog;
+    TextView tvRatingCount;
+    Button btnAddContact;
+    String uuid,type;
     ImageView imForward,imBackward;
+    int count = 2;
+    TextView tvRating;
     int i = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_ad);
+        setContentView(R.layout.activity_live_ad_view);
 
 
-        progressDialog=new ProgressDialog(EditAdActivity.this);
+
+
+        SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
+        uuid = (shared.getString("UUID", ""));
+        type = (shared.getString("type", ""));
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,16 +77,25 @@ public class EditAdActivity extends AppCompatActivity {
 
         }
         im = (ImageView) findViewById(R.id.im);
+        tvDes = (TextView) findViewById(R.id.tvDes);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
         imBack = (ImageButton) findViewById(R.id.imBack);
-
-
-        etCategory = (TextInputLayout) findViewById(R.id.etCategory);
-        etDes = (TextInputLayout) findViewById(R.id.etDes);
-        edTitle = (TextInputLayout) findViewById(R.id.etTitle);
-        tvTitleToolbar =(TextView) findViewById(R.id.tvTitleToolbar);
-        btnDelete = (Button) findViewById(R.id.btnDelete);
+        tvTitleToolbar = (TextView) findViewById(R.id.tvTitleToolbar);
+        btnAddContact = (Button) findViewById(R.id.btnAddContact);
         imForward = (ImageView) findViewById(R.id.imForward);
         imBackward = (ImageView) findViewById(R.id.imBackward);
+        tvRatingCount = (TextView) findViewById(R.id.tvRatingCount);
+        tvRating = (TextView) findViewById(R.id.tvRating);
+//        android:padding="@dimen/_20sdp"
+
+
+
+
+
+
+
+
+
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
         mDatabaseReference.child("Ads").child(adKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -82,16 +105,59 @@ public class EditAdActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     final Ads a = dataSnapshot.getValue(Ads.class);
 
-                    edTitle.getEditText().setText(a.getAdTitle());
+                    tvTitle.setText(a.getAdTitle());
                     tvTitleToolbar.setText(a.getAdTitle());
-                    etDes.getEditText().setText(a.getAdDescription());
-                    etCategory.getEditText().setText(a.getCategory());
+                    tvDes.setText(a.getAdDescription());
 
                     Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                     servicerId = a.getServicerId();
+                    Log.e("test67444 ", servicerId);
 
 
-                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                    Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
+                    query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+
+                                int sum = 0;
+                                int count = 0;
+                                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+
+                                    String c = postSnapshot.child("rate").getValue().toString();
+                                    Log.e("test452 ", String.valueOf(c));
+
+                                    sum = sum + Integer.parseInt(c);
+                                    //count = count + 1;
+
+                                }
+
+                                //Log.e("test45",sum+" asdas"+count);
+
+                                int s = (int)dataSnapshot.getChildrenCount();
+
+                                double d = sum / s;
+                                //Log.e("test45", String.valueOf(sum));
+
+                                tvRating.setText(String.valueOf(d));
+
+                                tvRatingCount.setText("("+String.valueOf(s)+")");
+
+                            }else{
+
+
+
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     imForward.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -237,6 +303,10 @@ public class EditAdActivity extends AppCompatActivity {
                     });
 
 
+
+                    //Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("servicerId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
+
+
                 }
 
 
@@ -247,36 +317,6 @@ public class EditAdActivity extends AppCompatActivity {
 
             }
         });
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                progressDialog.setMessage("Deleting...");
-                progressDialog.setCancelable(false);
-                progressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
-                progressDialog.show();
-
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
-                mDatabaseReference.child("Ads").child(adKey).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                        progressDialog.dismiss();
-                        Intent intent = new Intent(EditAdActivity.this,MyAdsActivity.class);
-
-                        startActivity(intent);
-                        finish();
-
-                    }
-                });
-
-
-            }
-        });
-
-
-
 
 
 

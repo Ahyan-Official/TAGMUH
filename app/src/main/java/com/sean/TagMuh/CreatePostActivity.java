@@ -455,6 +455,10 @@ public class CreatePostActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     mProgressDialog.dismiss();
+                                                    Intent intent=new Intent(CreatePostActivity.this,MainActivity.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
+                                                    finish();
                                                 }
                                             });
 
@@ -492,7 +496,14 @@ public class CreatePostActivity extends AppCompatActivity {
             databaseReference.child("category").setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+
                     mProgressDialog.dismiss();
+
+                    Intent intent=new Intent(CreatePostActivity.this,MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
                 }
             });
         }

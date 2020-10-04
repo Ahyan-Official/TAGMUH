@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,17 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
-public class MyAdsActivity extends AppCompatActivity {
+public class LiveAdsOtherActivity extends AppCompatActivity {
 
     AHBottomNavigation bottomNavigation;
 
@@ -48,23 +42,32 @@ public class MyAdsActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ImageButton imback;
+    ImageView imHome;
     String uuid,type;
     TextView tvNo;
+
+    String servicerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_ads);
+        setContentView(R.layout.activity_live_ads_other);
 
 
 
         imback = (ImageButton) findViewById(R.id.imback);
+        imHome = (ImageView) findViewById(R.id.imHome);
 
         SharedPreferences shared = getSharedPreferences("UUID", MODE_PRIVATE);
         uuid = (shared.getString("UUID", ""));
         type = (shared.getString("type", ""));
 
 
+        if(getIntent()!=null){
+
+            servicerId = getIntent().getStringExtra("servicerId");
+
+        }
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,7 +82,7 @@ public class MyAdsActivity extends AppCompatActivity {
 
 
 
-        Query query2 = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("servicerId").startAt(uuid).endAt(uuid+ "\uf8ff");
+        Query query2 = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("servicerId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
         query2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -108,12 +111,24 @@ public class MyAdsActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
 
+        imHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
+                Intent intent=new Intent(LiveAdsOtherActivity.this,MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+
+            }
+        });
+
         imback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 onBackPressed();
-
             }
         });
 
@@ -138,6 +153,7 @@ public class MyAdsActivity extends AppCompatActivity {
         TextView tvRatingCount,tvRating;
         RoundedImageView image;
 
+
         public AdsViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.tvTitle);
@@ -146,6 +162,7 @@ public class MyAdsActivity extends AppCompatActivity {
             tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
             tvRating = itemView.findViewById(R.id.tvRating);
             image = (RoundedImageView) itemView.findViewById(R.id.image);
+
         }
 
         public void setTxtTitle(String string) {
@@ -168,7 +185,7 @@ public class MyAdsActivity extends AppCompatActivity {
     private void fetch() {
 
 
-        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("servicerId").startAt(uuid).endAt(uuid+ "\uf8ff");
+        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("servicerId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
 
 
         FirebaseRecyclerOptions<Ads> options = new FirebaseRecyclerOptions.Builder<Ads>().setQuery(query, Ads.class).build();
@@ -188,7 +205,6 @@ public class MyAdsActivity extends AppCompatActivity {
             protected void onBindViewHolder(final AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
-
                 Picasso.get().load(model.getAdImage1()).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
 
                 holder.rlAd.setOnClickListener(new View.OnClickListener() {
@@ -196,9 +212,11 @@ public class MyAdsActivity extends AppCompatActivity {
                     public void onClick(View view) {
 
 
-                        Intent intent = new Intent(MyAdsActivity.this,EditAdActivity.class);
+                        Intent intent = new Intent(LiveAdsOtherActivity.this,LiveAdViewActivity.class);
 
                         intent.putExtra("adId",getRef(position).getKey().toString());
+                        intent.putExtra("adId",getRef(position).getKey().toString());
+
                         startActivity(intent);
                     }
                 });
@@ -366,6 +384,4 @@ public class MyAdsActivity extends AppCompatActivity {
             return true;
         }
     };
-
-
 }

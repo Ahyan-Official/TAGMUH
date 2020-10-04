@@ -39,7 +39,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
     ImageButton imBack;
     Toolbar toolbar;
 
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference,databaseReferenceUpload;
     String uuid,type;
     private static final int GALLERY_PICK = 1;
     ProgressDialog mProgressDialog;
@@ -72,7 +72,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
         imBack = (ImageButton) findViewById(R.id.imBack);
 
 
-
+        databaseReferenceUpload =  FirebaseDatabase.getInstance().getReference().child("Personal Photos").child(uuid);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(uuid);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -83,7 +83,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
                 Servicer s = dataSnapshot.getValue(Servicer.class);
                 email = s.getEmail();
 
-                Picasso.get().load(s.getProfileImg()).placeholder(R.drawable.profile_im).error(R.drawable.profile_im).into(im);
+                //Picasso.get().load(s.getProfileImg()).placeholder(R.drawable.profile_im).error(R.drawable.profile_im).into(im);
 
 
             }
@@ -93,6 +93,30 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
 
             }
         });
+
+
+        databaseReferenceUpload.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                if(dataSnapshot.exists()){
+
+                    Picasso.get().load(dataSnapshot.child("imgUrl").getValue().toString()).placeholder(R.drawable.profile_im).error(R.drawable.profile_im).into(im);
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
 
         imBack.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +159,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
                     mProgressDialog.setProgress(ProgressDialog.STYLE_SPINNER);
                     mProgressDialog.show();
 
-                    final StorageReference filepath=mStorageReference.child("Servicer").child(email).child(uuid+".png");
+                    final StorageReference filepath=mStorageReference.child("PersonalPhotos").child(email).child(uuid+".png");
 
                     //------STORING IMAGE IN FIREBASE STORAGE--------
                     filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -149,7 +173,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
                                     public void onSuccess(Uri uri) {
                                         String downloadUrl = uri.toString();
 
-                                        databaseReference.child("profileImg").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        databaseReferenceUpload.child("imgUrl").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
 

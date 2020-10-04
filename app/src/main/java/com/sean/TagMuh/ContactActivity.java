@@ -1,15 +1,25 @@
 package com.sean.TagMuh;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +35,8 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +45,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+import com.tsuryo.swipeablerv.SwipeLeftRightCallback;
+import com.tsuryo.swipeablerv.SwipeableRecyclerView;
 
 public class ContactActivity extends AppCompatActivity {
 
@@ -44,8 +58,9 @@ public class ContactActivity extends AppCompatActivity {
     FirebaseRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
 
-    RecyclerView recyclerView;
+    SwipeableRecyclerView recyclerView;
     String uuid,type;
+    TextView tvNo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +73,8 @@ public class ContactActivity extends AppCompatActivity {
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bnve);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
+        recyclerView = (SwipeableRecyclerView) findViewById(R.id.recyclerView);
+        tvNo = (TextView) findViewById(R.id.tvNo);
         setSupportActionBar(toolbar);
 
 
@@ -118,7 +133,36 @@ public class ContactActivity extends AppCompatActivity {
 //
 //        }
 
-        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").orderByChild("adsId").startAt(uuid).endAt(uuid+ "\uf8ff");
+
+
+
+
+        Query query2 = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").startAt(uuid).endAt(uuid+ "\uf8ff");
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int a = (int)dataSnapshot.getChildrenCount();
+                if(a==0){
+                    tvNo.setVisibility(View.VISIBLE);
+                }else{
+
+                    tvNo.setVisibility(View.GONE);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Contacts").orderByChild("customerId").startAt(uuid).endAt(uuid+ "\uf8ff");
         fetch(query);
 
         //fetch();
@@ -135,6 +179,7 @@ public class ContactActivity extends AppCompatActivity {
         public TextView txtDesc;
         RoundedImageView image;
         Button btnContactDetails,btnViewAds;
+        TextView tvRatingCount,tvRating;
 
         public ContactsViewHolder(View itemView) {
             super(itemView);
@@ -142,6 +187,8 @@ public class ContactActivity extends AppCompatActivity {
             txtDesc = itemView.findViewById(R.id.tvDec);
             image = (RoundedImageView) itemView.findViewById(R.id.image);
             btnContactDetails = (Button) itemView.findViewById(R.id.btnContactDetails);
+            tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
+            tvRating = itemView.findViewById(R.id.tvRating);
 
             btnViewAds = (Button) itemView.findViewById(R.id.btnViewAds);
 
@@ -162,9 +209,119 @@ public class ContactActivity extends AppCompatActivity {
 
 
 
+    ItemTouchHelper.SimpleCallback callback;
 
 
     private void fetch(Query query) {
+
+
+
+//
+//
+//        callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+//            @Override
+//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+//                // Take action for the swiped item
+//
+//
+//                if(direction == ItemTouchHelper.LEFT){
+//
+//
+//                    recyclerView.removeView(viewHolder.itemView);
+//
+//
+//
+//                    AlertDialog.Builder builder1 = new AlertDialog.Builder(ContactActivity.this);
+//                    builder1.setMessage("Delete?");
+//                    builder1.setCancelable(true);
+//
+//
+//
+//                    builder1.setPositiveButton(
+//                            "Yes",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int id) {
+//
+//
+//                                    dialog.cancel();
+//                                    //recyclerView.removeView(holder.itemView);
+//                                    recyclerView.removeView(viewHolder.itemView);
+//                                    viewHolder.getAdapterPosition();
+//
+//                                    FirebaseDatabase.getInstance().getReference().child("Contacts").child(getRef(position).getKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            //recyclerView.removeViewAt(position);
+//                                            //recyclerView.removeViewAt(position);
+//                                            //adapter.notifyDataSetChanged();
+//                                            //recyclerView.removeViewAt(position);
+//                                            recyclerView.removeView(viewHolder.itemView);
+//
+//
+//                                        }
+//                                    });
+//
+//                                }
+//                            });
+//
+//                    builder1.setNegativeButton(
+//                            "No",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    dialog.cancel();
+//                                    recyclerView.removeView(viewHolder.itemView);
+//
+//                                    //recyclerView.removeView(holder.itemView);
+//
+//
+//
+//                                }
+//                            });
+//
+//                    AlertDialog alert11 = builder1.create();
+//                    alert11.show();
+//
+//
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+//
+//                new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+//                        .addSwipeLeftLabel("Delete")
+//                        //.addActionIcon(R.drawable.id)
+//                        .addBackgroundColor(ContextCompat.getColor(ContactActivity.this, R.color.red))
+//                        .create()
+//                        .decorate();
+//
+//
+//
+//
+//
+//
+//                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+//            }
+//
+//            @Override
+//            public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+//
+//
+//
+//                super.onSelectedChanged(viewHolder, actionState);
+//            }
+//        };
+//
+//
+//
+//
 
 
 
@@ -181,24 +338,139 @@ public class ContactActivity extends AppCompatActivity {
             }
 
 
+
             @Override
             protected void onBindViewHolder(final ContactsViewHolder holder, final int position, final Contacts model) {
-                holder.setTxtTitle(model.getAdsId());
-                holder.setTxtDesc(model.getCustomerId());
+               // holder.setTxtTitle(model.getAdsId());
+                //holder.setTxtDesc(model.getCustomerId());
+
+                //recyclerView.setRightBg(R.color.red);
 
 
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(model.getServicerId());
 
-                db.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                recyclerView.setListener(new SwipeLeftRightCallback.Listener() {
+                    @Override
+                    public void onSwipedLeft(final int position) {
+
+                        recyclerView.setRightBg(R.color.red);
+
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ContactActivity.this);
+                        builder1.setMessage("Delete?");
+                        builder1.setCancelable(true);
+
+
+
+                        builder1.setPositiveButton(
+                                "Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+
+                                        recyclerView.setRightBg(R.color.white);
+
+                                        dialog.cancel();
+                                        //recyclerView.removeView(holder.itemView);
+                                        recyclerView.removeViewAt(position);
+
+
+                                        FirebaseDatabase.getInstance().getReference().child("Contacts").child(getRef(position).getKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                                Intent intent=new Intent(ContactActivity.this,RatingActivity.class);
+                                                intent.putExtra("servicerId",model.getServicerId());
+                                                startActivity(intent);
+
+
+
+                                                //recyclerView.removeViewAt(position);
+                                                //recyclerView.removeViewAt(position);
+                                                //adapter.notifyDataSetChanged();
+                                                //recyclerView.removeViewAt(position);
+                                                //recyclerView.setRightBg(R.color.white);
+
+
+                                            }
+                                        });
+
+                                    }
+                                });
+
+                        builder1.setNegativeButton(
+                                "No",
+                                  new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                        recyclerView.removeViewAt(position);
+
+                                        //recyclerView.removeView(holder.itemView);
+
+
+
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+
+                        Log.e("asd",String.valueOf(getRef(position).getKey()));
+
+                        //recyclerView.removeViewAt(position);
+                        //recyclerView.setRightBg(R.color.white);
+                        //recyclerView.removeViewAt(position);
+                        //adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onSwipedRight(int position) {
+                        //mList.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+
+
+
+
+
+                });
+
+
+
+
+                Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(model.getServicerId()).endAt(model.getServicerId()+ "\uf8ff");
+                query2.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+
+                            int sum = 0;
+                            int count = 0;
+                            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
 
-                        Servicer s = dataSnapshot.getValue(Servicer.class);
+                                String c = postSnapshot.child("rate").getValue().toString();
+                                Log.e("test452 ", String.valueOf(c));
 
-                        holder.txtTitle.setText(s.getFirstName()+ " "+s.getLastName());
-                        holder.txtDesc.setText(s.getLocation());
-                        Picasso.get().load(s.getProfileImg()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(holder.image);
+                                sum = sum + Integer.parseInt(c);
+                                //count = count + 1;
+
+                            }
+
+                            //Log.e("test45",sum+" asdas"+count);
+
+                            int s = (int)dataSnapshot.getChildrenCount();
+
+                            double d = sum / s;
+                            //Log.e("test45", String.valueOf(sum));
+
+                            holder.tvRating.setText(String.valueOf(d));
+
+                            holder.tvRatingCount.setText("("+String.valueOf(s)+")");
+
+                        }else{
+
+
+
+                        }
 
 
                     }
@@ -209,6 +481,57 @@ public class ContactActivity extends AppCompatActivity {
                     }
                 });
 
+
+
+
+
+
+                Log.e("asd2 ",String.valueOf(position));
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(model.getServicerId());
+
+                db.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                        Servicer s = dataSnapshot.getValue(Servicer.class);
+
+                       //holder.txtTitle.setText(s.getFirstName()+ " "+s.getLastName());
+                        holder.txtDesc.setText(s.getLocation());
+                        //Picasso.get().load(s.getProfileImg()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                DatabaseReference db2 = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").child(model.getAdsId());
+
+                db2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                        Ads s = dataSnapshot.getValue(Ads.class);
+
+                        holder.txtTitle.setText(s.getAdTitle());
+                        ///holder.txtDesc.setText(s.getLocation());
+                        Picasso.get().load(s.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
 
                 holder.btnContactDetails.setOnClickListener(new View.OnClickListener() {
@@ -247,6 +570,12 @@ public class ContactActivity extends AppCompatActivity {
             }
 
         };
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         recyclerView.setAdapter(adapter);
         adapter.startListening();
     }

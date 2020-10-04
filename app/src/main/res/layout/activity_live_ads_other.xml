@@ -11,7 +11,7 @@
 
 
 
-    <include layout="@layout/toolbar_my_ads"
+    <include layout="@layout/toolbar_liveads_other"
         android:id="@+id/toolbar"/>
     <TextView
         android:layout_width="wrap_content"

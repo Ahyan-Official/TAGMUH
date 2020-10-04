@@ -246,8 +246,9 @@
                 android:layout_height="match_parent"
                 android:textAlignment="center"
                 android:id="@+id/tvSignUp"
+                android:textColor="#C5C4C4"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="Already have an account? Sign Up"/>
+                android:text="Don't have an account? Sign Up."/>
 
             <Button
                 android:id="@+id/buttonRegister"

@@ -47,11 +47,13 @@ public class AdViewActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseReference;
     ImageButton imBack;
     TextView tvTitleToolbar;
-    TextView tvLocation;
+    TextView tvLocation,tvRatingCount;
     Button btnAddContact;
     String uuid,type;
     ImageView imForward,imBackward;
     int count = 2;
+    TextView tvRating;
+    int i = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +88,17 @@ public class AdViewActivity extends AppCompatActivity {
         btnAddContact = (Button) findViewById(R.id.btnAddContact);
         imForward = (ImageView) findViewById(R.id.imForward);
         imBackward = (ImageView) findViewById(R.id.imBackward);
-
+        tvRatingCount = (TextView) findViewById(R.id.tvRatingCount);
+        tvRating = (TextView) findViewById(R.id.tvRating);
 //        android:padding="@dimen/_20sdp"
+
+
+
+
+
+
+
+
 
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
@@ -98,6 +109,26 @@ public class AdViewActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     final Ads a = dataSnapshot.getValue(Ads.class);
 
+                    if(a.getServicerId().equals(uuid)){
+
+                        Drawable d = getResources().getDrawable(R.drawable.button_disable);
+
+                        btnAddContact.setBackground(d);
+                        int margin = getResources().getDimensionPixelSize(R.dimen._20sdp);
+
+                        btnAddContact.setPadding(margin,margin,margin,margin);
+                        btnAddContact.setOnClickListener(null);
+                        btnAddContact.setEnabled(false);
+
+
+                    }else{
+                        btnAddContact.setEnabled(true);
+
+                        btnAddContact.setClickable(true);
+
+                    }
+
+
                     tvTitle.setText(a.getAdTitle());
                     tvTitleToolbar.setText(a.getAdTitle());
                     tvDes.setText(a.getAdDescription());
@@ -105,38 +136,107 @@ public class AdViewActivity extends AppCompatActivity {
                     Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                     servicerId = a.getServicerId();
 
+                    Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
+                    query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+
+                                int sum = 0;
+                                int count = 0;
+                                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+
+                                    String c = postSnapshot.child("rate").getValue().toString();
+                                    Log.e("test452 ", String.valueOf(c));
+
+                                    sum = sum + Integer.parseInt(c);
+                                    //count = count + 1;
+
+                                }
+
+                                //Log.e("test45",sum+" asdas"+count);
+
+                                int s = (int)dataSnapshot.getChildrenCount();
+
+                                double d = sum / s;
+                                //Log.e("test45", String.valueOf(sum));
+
+                                tvRating.setText(String.valueOf(d));
+
+                                tvRatingCount.setText("("+String.valueOf(s)+")");
+
+                            }else{
+
+
+
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     imForward.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
 
-                            if(count>3 || count==0){
+                            i++;
 
-                                count = 1;
-                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-                                count = count+1;
-
-                            }else{
-
-                                if (count==1){
-
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }else if (count==2){
-
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }else if (count==3){
-
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }
-                                count = count+1;
-
+                            if(i==3) // switch to 11 because you got 10 images
+                            {
+                                i=0; // switch to 10, same reason
                             }
 
-                            Log.e("countF",String.valueOf(count));
+                            switch(i)
+                            {
+
+                                case 0:
+                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    break;
+
+                                case 1:
+                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    break;
+                                case 2:
+                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                    break;
+                            }
+
+//                            if(count>3 || count==0){
+//
+//                                //count = 1;
+////                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+////                                count = count+1;
+//
+//                            }else{
+//
+//                                if (count==1){
+//
+//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count+1;
+//
+//                                }else if (count==2){
+//
+//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count+1;
+//
+//                                }else if (count==3){
+//
+//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count+1;
+//
+//                                }
+//
+//                            }
+
+                            Log.e("countF",String.valueOf(i));
 
 
 
@@ -147,31 +247,78 @@ public class AdViewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
-                            if(count==0 || count>3){
+                            i--;
 
-                                count = 1;
-                                //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-                                //count = count+1;
-                            }else{
-
-                                if (count==1){
-
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }else if (count==2){
-
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }else if (count==3){
-
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-
-                                }
-                                count = count-1;
-
+                            if(i==-1)
+                            {
+                                i=0; // you can leave it this way or improve it later
                             }
 
-                            Log.e("countb",String.valueOf(count));
+
+                            switch(i)
+                            {
+
+                                case 0:
+                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    break;
+
+                                case 1:
+                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    break;
+                                case 2:
+                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+                                    break;
+                            }
+
+//                            if(count ==4){
+//                                count = 2;
+//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//
+//                            }else
+//
+//                            if(count==0){
+//
+//                                count = 1;
+//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                //count = count+1;
+//                            }else{
+//
+//                                if (count==1){
+//
+//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count-1;
+//                                    if(count==0){
+//
+//                                        count = 1;
+//
+//                                    }
+//
+//                                }else if (count==2){
+//
+//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count-1;
+//                                    if(count==0){
+//
+//                                        count = 1;
+//
+//                                    }
+//
+//                                }else if (count==3){
+//
+//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+//                                    count = count-1;
+//                                    if(count==0){
+//
+//                                        count = 1;
+//
+//                                    }
+//
+//                                }
+
+                          //  }
+
+                            Log.e("countb",String.valueOf(i));
 
 
                         }
@@ -290,6 +437,11 @@ public class AdViewActivity extends AppCompatActivity {
                                                             btnAddContact.setOnClickListener(null);
                                                             btnAddContact.setOnClickListener(null);
                                                             btnAddContact.setEnabled(false);
+
+                                                            Intent intent=new Intent(AdViewActivity.this,ContactActivity.class);
+                                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                            startActivity(intent);
+                                                            finish();
                                                         }
                                                     });
 
@@ -368,6 +520,11 @@ public class AdViewActivity extends AppCompatActivity {
                                                     btnAddContact.setClickable(false);
                                                     btnAddContact.setOnClickListener(null);
                                                     btnAddContact.setEnabled(false);
+
+                                                    Intent intent=new Intent(AdViewActivity.this,ContactActivity.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
+                                                    finish();
                                                 }
                                             });
 

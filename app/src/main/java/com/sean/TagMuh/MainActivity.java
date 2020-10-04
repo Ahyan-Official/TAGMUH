@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,9 +35,12 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     String uuid,type;
 
+    TextView tvNo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         uuid = (shared.getString("UUID", ""));
         type = (shared.getString("type", ""));
 
+        tvNo = (TextView) findViewById(R.id.tvNo);
 
 
         listView = (ListView)findViewById(R.id.listView);
@@ -178,6 +185,31 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
+
+        Query query2 = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int a = (int)dataSnapshot.getChildrenCount();
+                if(a==0){
+                    tvNo.setVisibility(View.VISIBLE);
+                }else{
+
+                    tvNo.setVisibility(View.GONE);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads");
 
         fetch(query);
@@ -198,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         public TextView txtDesc;
         RelativeLayout rlAd;
         RoundedImageView image;
+        TextView tvRatingCount,tvRating;
 
 
         public AdsViewHolder(View itemView) {
@@ -206,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
             txtDesc = itemView.findViewById(R.id.tvDec);
             rlAd = itemView.findViewById(R.id.rlAd);
             image = itemView.findViewById(R.id.image);
+            tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
+            tvRating = itemView.findViewById(R.id.tvRating);
 
 
         }
@@ -242,14 +277,71 @@ public class MainActivity extends AppCompatActivity {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ad_itemview, parent, false);
 
                 return new AdsViewHolder(view);
+
             }
 
 
             @Override
-            protected void onBindViewHolder(AdsViewHolder holder, final int position, Ads model) {
+            protected void onBindViewHolder(final AdsViewHolder holder, final int position, Ads model) {
+
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
-                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(holder.image);
+                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+                Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(model.getServicerId()).endAt(model.getServicerId()+ "\uf8ff");
+                query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+
+                            int sum = 0;
+                            int count = 0;
+                            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+
+                                String c = postSnapshot.child("rate").getValue().toString();
+                                Log.e("test452 ", String.valueOf(c));
+
+                                sum = sum + Integer.parseInt(c);
+                                //count = count + 1;
+
+                            }
+
+                            //Log.e("test45",sum+" asdas"+count);
+
+                            int s = (int)dataSnapshot.getChildrenCount();
+
+                            double d = sum / s;
+                            //Log.e("test45", String.valueOf(sum));
+
+                            holder.tvRating.setText(String.valueOf(d));
+
+                            holder.tvRatingCount.setText("("+String.valueOf(s)+")");
+
+                        }else{
+
+
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+
+
+
+
+
+
 
                 holder.rlAd.setOnClickListener(new View.OnClickListener() {
                     @Override

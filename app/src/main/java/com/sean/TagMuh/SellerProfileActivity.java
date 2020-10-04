@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -49,6 +50,7 @@ public class SellerProfileActivity extends AppCompatActivity {
 
     ImageView imLogout,imUploadPhoto;
     DatabaseReference databaseReferenceAdCount;
+        TextView tvRating;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +73,7 @@ public class SellerProfileActivity extends AppCompatActivity {
         cdCreatePost = (CardView) findViewById(R.id.cdCreatePost);
         imLogout = (ImageView) findViewById(R.id.imLogout);
         imUploadPhoto = (ImageView) findViewById(R.id.imUploadPhoto);
+        tvRating = (TextView) findViewById(R.id.tvRating);
 
         tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
@@ -155,6 +158,60 @@ public class SellerProfileActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+        Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(uuid).endAt(uuid+ "\uf8ff");
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+
+                    int sum = 0;
+                    int count = 0;
+                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+
+                        String c = postSnapshot.child("rate").getValue().toString();
+                        Log.e("test452 ", String.valueOf(c));
+
+                        sum = sum + Integer.parseInt(c);
+                        //count = count + 1;
+
+                    }
+
+                    //Log.e("test45",sum+" asdas"+count);
+
+                    int s = (int)dataSnapshot.getChildrenCount();
+
+                    double d = sum / s;
+                    //Log.e("test45", String.valueOf(sum));
+
+                    tvRating.setText(String.valueOf(d));
+
+
+                }else{
+
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+
+
+
 
 
 

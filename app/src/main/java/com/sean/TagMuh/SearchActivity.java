@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,8 +27,11 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -160,7 +164,7 @@ public class SearchActivity extends AppCompatActivity {
 
                         search = true;
 
-                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext).endAt(searchtext+ "\uf8ff");
+                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext.toUpperCase()).endAt(searchtext.toLowerCase()+ "\uf8ff");
                         adapter = null;
                         fetch(query);
 
@@ -201,6 +205,7 @@ public class SearchActivity extends AppCompatActivity {
             rlAd = itemView.findViewById(R.id.rlAd);
             image = itemView.findViewById(R.id.image);
 
+
         }
 
         public void setTxtTitle(String string) {
@@ -234,11 +239,11 @@ public class SearchActivity extends AppCompatActivity {
 
 
             @Override
-            protected void onBindViewHolder(AdsViewHolder holder, final int position, Ads model) {
+            protected void onBindViewHolder(final AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
 
-                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(holder.image);
+                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
 
 
 
@@ -253,6 +258,10 @@ public class SearchActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+
+
+
+
 
 
             }

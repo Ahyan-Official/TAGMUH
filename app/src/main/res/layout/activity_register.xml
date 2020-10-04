@@ -246,7 +246,8 @@
             android:textAlignment="center"
             android:layout_marginTop="@dimen/_5sdp"
             android:id="@+id/tvLogin"
-            android:text="Already have an account? Log In"/>
+            android:textColor="#C5C4C4"
+            android:text="Already have an account? Log In."/>
 
     </LinearLayout>
 

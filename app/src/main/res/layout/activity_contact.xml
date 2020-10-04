@@ -18,16 +18,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:textSize="@dimen/_14sdp"
+        android:text="No Contacts"
         android:visibility="visible"
+        android:id="@+id/tvNo"
         android:layout_centerHorizontal="true"/>
 
-    <androidx.recyclerview.widget.RecyclerView
+
+
+
+    <com.tsuryo.swipeablerv.SwipeableRecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView"
+        app:rightBgColor="@color/red"
+        app:rightText="Delete"
+        app:textColor="@android:color/white"
         android:layout_above="@+id/bnve"
         android:layout_below="@+id/toolbar"
-        />
+        app:textSize="20sp" />
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        -->
+<!--        />-->
 
 
     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation

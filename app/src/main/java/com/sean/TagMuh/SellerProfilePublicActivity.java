@@ -2,9 +2,11 @@ package com.sean.TagMuh;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -30,6 +32,7 @@ public class SellerProfilePublicActivity extends AppCompatActivity {
     ImageView imHome;
     ImageButton imback;
     DatabaseReference databaseReferenceAdCount;
+    CardView cdLiveAds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class SellerProfilePublicActivity extends AppCompatActivity {
         tvAdCount = (TextView) findViewById(R.id.tvAdCount);
         tvRating = (TextView) findViewById(R.id.tvRating);
         imHome = (ImageView) findViewById(R.id.imHome);
+        cdLiveAds = (CardView) findViewById(R.id.cdLiveAds);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -99,6 +103,69 @@ public class SellerProfilePublicActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        Query query2 = FirebaseDatabase.getInstance().getReference().child("Ratings").orderByChild("userId").startAt(servicerId).endAt(servicerId+ "\uf8ff");
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+
+                    int sum = 0;
+                    int count = 0;
+                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+
+                        String c = postSnapshot.child("rate").getValue().toString();
+                        Log.e("test452 ", String.valueOf(c));
+
+                        sum = sum + Integer.parseInt(c);
+                        //count = count + 1;
+
+                    }
+
+                    //Log.e("test45",sum+" asdas"+count);
+
+                    int s = (int)dataSnapshot.getChildrenCount();
+
+                    double d = sum / s;
+                    //Log.e("test45", String.valueOf(sum));
+
+                    tvRating.setText(String.valueOf(d));
+
+
+                }else{
+
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+
+
+        cdLiveAds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SellerProfilePublicActivity.this,LiveAdsOtherActivity.class);
+                intent.putExtra("servicerId",servicerId);
+                startActivity(intent);
+
 
             }
         });

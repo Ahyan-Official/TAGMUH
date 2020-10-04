@@ -224,6 +224,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
+            android:id="@+id/cdLiveAds"
             android:layout_height="@dimen/_60sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
