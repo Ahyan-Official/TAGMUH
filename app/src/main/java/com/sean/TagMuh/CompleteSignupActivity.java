@@ -143,8 +143,11 @@ public class CompleteSignupActivity extends AppCompatActivity {
                     userMap.put("location",GL);
                     userMap.put("phoneNumber",PN);
                     userMap.put("profileImg","No Image");
-                    //sadasdasdasdasdasdasdasd
+                    //sadasdasdasdasdasdasdasdghjgj
 
+                    DatabaseReference databaseReference;
+                    databaseReference = FirebaseDatabase.getInstance().getReference();
+                    databaseReference.child("asdas");
                     mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task1) {
