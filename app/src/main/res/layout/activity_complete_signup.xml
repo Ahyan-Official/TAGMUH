@@ -97,7 +97,7 @@
                 android:layout_height="match_parent"
                 android:drawableTint="#FF4081"
                 android:backgroundTint="#D1D1D1"
-
+                android:textAllCaps="true"
                 android:hint="Description"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>

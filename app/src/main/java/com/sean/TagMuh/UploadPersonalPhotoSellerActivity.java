@@ -180,7 +180,7 @@ public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
 
                                                 if(task.isSuccessful()){
                                                     mProgressDialog.dismiss();
-                                                    Toast.makeText(UploadPersonalPhotoSellerActivity.this, "Uploaded Successfuly...", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(UploadPersonalPhotoSellerActivity.this, "Uploaded Successfully...", Toast.LENGTH_SHORT).show();
 
                                                 }
                                                 else{

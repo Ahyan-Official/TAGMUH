@@ -1,11 +1,17 @@
 package com.sean.TagMuh;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -87,9 +93,22 @@ public class ContactDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:"+phone));
                 startActivity(callIntent);
+
+            }
+        });
+
+        btnMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+
+
+                sendSmsMsgFnc(phone,"Hi");
 
             }
         });
@@ -98,12 +117,16 @@ public class ContactDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL  , email);
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto",email, null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
+
+
 
                 try {
-                    startActivity(Intent.createChooser(i, "Send mail..."));
+                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(ContactDetailActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                 }
@@ -133,6 +156,88 @@ public class ContactDetailActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
+
+
+
+    }
+
+    void sendSmsMsgFnc(String mblNumVar, String smsMsgVar)
+    {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED)
+        {
+            try
+            {
+
+
+
+                Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                smsIntent.setType("vnd.android-dir/mms-sms");
+                smsIntent.setData(Uri.parse("sms:" + phone));
+                startActivity(smsIntent);
+
+
+
+            }
+            catch (Exception ErrVar)
+            {
+                Toast.makeText(getApplicationContext(),ErrVar.getMessage().toString(),
+                        Toast.LENGTH_LONG).show();
+                ErrVar.printStackTrace();
+            }
+        }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                requestPermissions(new String[]{Manifest.permission.SEND_SMS}, 10);
+            }
+        }
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==RESULT_OK && requestCode==10){
+
+
+            Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+            smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            smsIntent.setType("vnd.android-dir/mms-sms");
+            smsIntent.setData(Uri.parse("sms:" + phone));
+            startActivity(smsIntent);
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
