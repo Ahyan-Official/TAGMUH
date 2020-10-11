@@ -34,7 +34,6 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 public class UploadPersonalPhotoSellerActivity extends AppCompatActivity {
 
-    String servicerId;
     RoundedImageView im;
     ImageButton imBack;
     Toolbar toolbar;
