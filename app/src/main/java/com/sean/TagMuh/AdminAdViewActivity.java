@@ -63,6 +63,7 @@ public class AdminAdViewActivity extends AppCompatActivity {
     int count = 2;
     TextView tvRating;
     int i = 0;
+    int u;
 
     LinearLayout llrating;
 
