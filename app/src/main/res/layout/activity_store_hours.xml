@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StoreHoursActivity">
+
+
+
+
+    <include layout="@layout/toolbar_storehour"
+        android:id="@+id/toolbar"/>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/Buyer"
+        android:orientation="vertical">
+
+
+
+
+
+
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:id="@+id/cdStoreHours"
+            app:cardElevation="@dimen/_5sdp">
+
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="none"
+                    android:id="@+id/tvStoreHours"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/_15sdp"
+                    android:background="@android:color/transparent"
+                    android:text="Store Hours"/>
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/forward"
+                    android:id="@+id/sw"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/colorTransparent"/>
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:id="@+id/cdLogout"
+            app:cardElevation="@dimen/_5sdp">
+
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="none"
+                    android:id="@+id/tvAvailable"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/_15sdp"
+                    android:background="@android:color/transparent"
+                    android:text="Available"/>
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_20sdp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textAllCaps="false"
+            android:background="@drawable/button_white"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:text="Save"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -205,7 +207,15 @@ public class LiveAdsOtherActivity extends AppCompatActivity {
             protected void onBindViewHolder(final AdsViewHolder holder, final int position, Ads model) {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
-                Picasso.get().load(model.getAdImage1()).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.not_found)
+                        .error(R.drawable.not_found);
+
+                Glide.with(LiveAdsOtherActivity.this).load(model.getAdImage1()).apply(options).into(holder.image);
+
+                //Picasso.get().load(model.getAdImage1()).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
 
                 holder.rlAd.setOnClickListener(new View.OnClickListener() {
                     @Override

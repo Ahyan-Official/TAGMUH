@@ -217,6 +217,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         }
+
     }
 
 
@@ -295,5 +296,5 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    //-----REGISTERING THE NEW USER------
+
 }

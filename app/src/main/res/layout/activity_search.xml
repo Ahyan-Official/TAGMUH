@@ -19,8 +19,7 @@
         android:layout_below="@+id/toolbar"
         android:drawableLeft="@drawable/searc"
         android:imeOptions="actionSearch"
-        android:inputType="text"
-
+        android:inputType="textMultiLine|textCapSentences"
         android:textColor="#A5A4A4"
         android:paddingTop="@dimen/_5sdp"
         android:paddingBottom="@dimen/_5sdp"

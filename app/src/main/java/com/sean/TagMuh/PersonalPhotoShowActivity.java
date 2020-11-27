@@ -24,8 +24,8 @@ public class PersonalPhotoShowActivity extends AppCompatActivity {
     RoundedImageView im;
     ImageButton imBack;
     Toolbar toolbar;
+    DatabaseReference databaseReferenceUpload;
 
-    DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,16 +45,22 @@ public class PersonalPhotoShowActivity extends AppCompatActivity {
 
 
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Users").child(servicerId);
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        databaseReferenceUpload =  FirebaseDatabase.getInstance().getReference().child("Personal Photos").child(servicerId);
+
+        databaseReferenceUpload.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                Servicer s = dataSnapshot.getValue(Servicer.class);
 
-                Picasso.get().load(s.getProfileImg()).placeholder(R.drawable.profile_im).error(R.drawable.profile_im).into(im);
+                if(dataSnapshot.exists()){
+
+                    Picasso.get().load(dataSnapshot.child("imgUrl").getValue().toString()).placeholder(R.drawable.profile_im).error(R.drawable.profile_im).into(im);
+
+                }
+
 
 
             }

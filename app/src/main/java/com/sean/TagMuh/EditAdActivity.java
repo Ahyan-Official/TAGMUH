@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,11 +77,13 @@ public class EditAdActivity extends AppCompatActivity {
         imBackward = (ImageView) findViewById(R.id.imBackward);
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Servicer");
+
         mDatabaseReference.child("Ads").child(adKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.exists()){
+
                     final Ads a = dataSnapshot.getValue(Ads.class);
 
                     edTitle.getEditText().setText(a.getAdTitle());
@@ -87,16 +91,28 @@ public class EditAdActivity extends AppCompatActivity {
                     etDes.getEditText().setText(a.getAdDescription());
                     etCategory.getEditText().setText(a.getCategory());
 
-                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                    //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                     servicerId = a.getServicerId();
 
+                    RequestOptions options = new RequestOptions()
+                            .centerCrop()
+                            .placeholder(R.drawable.not_found)
+                            .error(R.drawable.not_found);
 
-                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+                    Glide.with(EditAdActivity.this).load(a.getAdImage1()).apply(options).into(im);
+
+                    //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
 
                     imForward.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
+                            RequestOptions options = new RequestOptions()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.not_found)
+                                    .error(R.drawable.not_found);
 
                             i++;
 
@@ -108,45 +124,32 @@ public class EditAdActivity extends AppCompatActivity {
                             switch(i)
                             {
 
+
                                 case 0:
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+
+
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage1()).apply(options).into(im);
+                                    /// Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
 
                                 case 1:
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage2()).apply(options).into(im);
+                                    //Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
                                 case 2:
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage3()).apply(options).into(im);
+                                    //Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
 
                                     break;
                             }
 
-//                            if(count>3 || count==0){
-//
-//                                //count = 1;
-////                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-////                                count = count+1;
-//
-//                            }else{
-//
-//                                if (count==1){
-//
-//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }else if (count==2){
-//
-//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }else if (count==3){
-//
-//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }
-//
-//                            }
+
 
                             Log.e("countF",String.valueOf(i));
 
@@ -158,6 +161,10 @@ public class EditAdActivity extends AppCompatActivity {
                     imBackward.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            RequestOptions options = new RequestOptions()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.not_found)
+                                    .error(R.drawable.not_found);
 
                             i--;
 
@@ -171,64 +178,24 @@ public class EditAdActivity extends AppCompatActivity {
                             {
 
                                 case 0:
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage1()).apply(options).into(im);
+
+                                    //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
 
                                 case 1:
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage2()).apply(options).into(im);
+
+                                    //Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
                                 case 2:
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(EditAdActivity.this).load(a.getAdImage3()).apply(options).into(im);
+
+                                    // Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
 
                                     break;
                             }
 
-//                            if(count ==4){
-//                                count = 2;
-//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//
-//                            }else
-//
-//                            if(count==0){
-//
-//                                count = 1;
-//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                //count = count+1;
-//                            }else{
-//
-//                                if (count==1){
-//
-//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }else if (count==2){
-//
-//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }else if (count==3){
-//
-//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }
-
-                            //  }
 
                             Log.e("countb",String.valueOf(i));
 

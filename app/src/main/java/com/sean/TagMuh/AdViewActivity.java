@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +57,8 @@ public class AdViewActivity extends AppCompatActivity {
     int count = 2;
     TextView tvRating;
     int i = 0;
+
+    LinearLayout llrating;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +82,8 @@ public class AdViewActivity extends AppCompatActivity {
             adKey = getIntent().getStringExtra("adId");
 
         }
+        llrating = (LinearLayout) findViewById(R.id.llrating);
+
         im = (ImageView) findViewById(R.id.im);
         imProfile = (RoundedImageView) findViewById(R.id.imProfile);
         tvName = (TextView) findViewById(R.id.tvName);
@@ -257,7 +262,7 @@ public class AdViewActivity extends AppCompatActivity {
 
                             if(i==-1)
                             {
-                                i=0; // you can leave it this way or improve it later
+                                i=0;
                             }
 
 

@@ -155,7 +155,7 @@
                 android:textAllCaps="false"
                 android:id="@+id/btnViewAds"
                 style="?android:attr/borderlessButtonStyle"
-                android:text="View Ad"/>
+                    android:text="Chat online"/>
 
 
 

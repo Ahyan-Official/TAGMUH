@@ -141,6 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
+        Toast.makeText(getApplicationContext(),"Signed In As Buyer",Toast.LENGTH_SHORT).show();
 
 
 
@@ -293,37 +294,15 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileActivity.this);
-                builder1.setMessage("Are you sure you want to logout?");
-                builder1.setCancelable(true);
-
-                builder1.setPositiveButton(
-                        "Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                FirebaseAuth.getInstance().signOut();
-                                Intent intent=new Intent(ProfileActivity.this,LoginActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
-
-                            }
-                        });
-
-                builder1.setNegativeButton(
-                        "No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
 
 
 
-                            }
-                        });
+                        Intent intent=new Intent(ProfileActivity.this,SettingsActivity.class);
+                        startActivity(intent);
 
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
+
+
+
 
 
             }

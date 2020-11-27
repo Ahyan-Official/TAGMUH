@@ -14,6 +14,50 @@
         android:id="@+id/toolbar"/>
 
 
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        android:id="@+id/cdONlineChat"
+        android:layout_below="@+id/toolbar"
+        app:cardElevation="@dimen/_5sdp">
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:inputType="none"
+                android:id="@+id/tvCreatePost"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textSize="@dimen/_15sdp"
+                android:background="@android:color/transparent"
+                android:text="Online Chats"/>
+
+
+        </RelativeLayout>
+
+
+
+
+
+
+
+
+    </androidx.cardview.widget.CardView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,6 +66,7 @@
         android:text="No Contacts"
         android:visibility="visible"
         android:id="@+id/tvNo"
+
         android:layout_centerHorizontal="true"/>
 
 
@@ -33,9 +78,10 @@
         android:layout_height="match_parent"
         app:rightBgColor="@color/red"
         app:rightText="Delete"
+        android:layout_below="@+id/cdONlineChat"
+
         app:textColor="@android:color/white"
         android:layout_above="@+id/bnve"
-        android:layout_below="@+id/toolbar"
         app:textSize="20sp" />
 
 <!--    <androidx.recyclerview.widget.RecyclerView-->

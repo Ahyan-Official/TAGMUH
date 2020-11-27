@@ -90,7 +90,7 @@
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-
+                    android:id="@+id/llrating"
                     android:orientation="horizontal">
 
 

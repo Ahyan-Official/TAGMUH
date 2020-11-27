@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -109,7 +111,14 @@ public class LiveAdViewActivity extends AppCompatActivity {
                     tvTitleToolbar.setText(a.getAdTitle());
                     tvDes.setText(a.getAdDescription());
 
-                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                    RequestOptions options = new RequestOptions()
+                            .centerCrop()
+                            .placeholder(R.drawable.not_found)
+                            .error(R.drawable.not_found);
+
+
+
+                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage1()).apply(options).into(im);
                     servicerId = a.getServicerId();
                     Log.e("test67444 ", servicerId);
 
@@ -163,6 +172,10 @@ public class LiveAdViewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
+                            RequestOptions options = new RequestOptions()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.not_found)
+                                    .error(R.drawable.not_found);
 
                             i++;
 
@@ -174,45 +187,32 @@ public class LiveAdViewActivity extends AppCompatActivity {
                             switch(i)
                             {
 
+
                                 case 0:
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+
+
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage1()).apply(options).into(im);
+                                    /// Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
 
                                 case 1:
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage2()).apply(options).into(im);
+                                    //Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
                                 case 2:
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+
+
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage3()).apply(options).into(im);
+                                    //Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
 
                                     break;
                             }
 
-//                            if(count>3 || count==0){
-//
-//                                //count = 1;
-////                                Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-////                                count = count+1;
-//
-//                            }else{
-//
-//                                if (count==1){
-//
-//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }else if (count==2){
-//
-//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }else if (count==3){
-//
-//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count+1;
-//
-//                                }
-//
-//                            }
+
 
                             Log.e("countF",String.valueOf(i));
 
@@ -224,6 +224,10 @@ public class LiveAdViewActivity extends AppCompatActivity {
                     imBackward.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            RequestOptions options = new RequestOptions()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.not_found)
+                                    .error(R.drawable.not_found);
 
                             i--;
 
@@ -237,64 +241,24 @@ public class LiveAdViewActivity extends AppCompatActivity {
                             {
 
                                 case 0:
-                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage1()).apply(options).into(im);
+
+                                    //Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
 
                                 case 1:
-                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage2()).apply(options).into(im);
+
+                                    //Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
                                     break;
                                 case 2:
-                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
+                                    Glide.with(LiveAdViewActivity.this).load(a.getAdImage3()).apply(options).into(im);
+
+                                    // Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
 
                                     break;
                             }
 
-//                            if(count ==4){
-//                                count = 2;
-//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//
-//                            }else
-//
-//                            if(count==0){
-//
-//                                count = 1;
-//                                Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                //count = count+1;
-//                            }else{
-//
-//                                if (count==1){
-//
-//                                    Picasso.get().load(a.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }else if (count==2){
-//
-//                                    Picasso.get().load(a.getAdImage2()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }else if (count==3){
-//
-//                                    Picasso.get().load(a.getAdImage3()).placeholder(R.drawable.not_found).error(R.drawable.not_found).into(im);
-//                                    count = count-1;
-//                                    if(count==0){
-//
-//                                        count = 1;
-//
-//                                    }
-//
-//                                }
-
-                            //  }
 
                             Log.e("countb",String.valueOf(i));
 

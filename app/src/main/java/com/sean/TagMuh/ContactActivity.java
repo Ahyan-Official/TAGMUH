@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,11 +29,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,6 +52,8 @@ import com.squareup.picasso.Picasso;
 import com.tsuryo.swipeablerv.SwipeLeftRightCallback;
 import com.tsuryo.swipeablerv.SwipeableRecyclerView;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class ContactActivity extends AppCompatActivity {
 
 
@@ -61,6 +67,9 @@ public class ContactActivity extends AppCompatActivity {
     SwipeableRecyclerView recyclerView;
     String uuid,type;
     TextView tvNo;
+
+    ImageButton imEnvalop;
+    CardView cdONlineChat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +84,8 @@ public class ContactActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (SwipeableRecyclerView) findViewById(R.id.recyclerView);
         tvNo = (TextView) findViewById(R.id.tvNo);
+        cdONlineChat = (CardView) findViewById(R.id.cdONlineChat);
+
         setSupportActionBar(toolbar);
 
 
@@ -168,8 +179,28 @@ public class ContactActivity extends AppCompatActivity {
         //fetch();
 
 
+        imEnvalop = (ImageButton)findViewById(R.id.imEnvalop);
 
 
+        imEnvalop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(ContactActivity.this,AdminAdsListActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+        cdONlineChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(ContactActivity.this,ChatListActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
 
 
@@ -377,8 +408,11 @@ public class ContactActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                Intent intent=new Intent(ContactActivity.this,RatingActivity.class);
-                                                intent.putExtra("servicerId",model.getServicerId());
+                                                Intent intent=new Intent(ContactActivity.this,ContactActivity.class);
+                                                overridePendingTransition(0, 0);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                                finish();
+                                                overridePendingTransition(0, 0);
                                                 startActivity(intent);
 
 
@@ -522,7 +556,14 @@ public class ContactActivity extends AppCompatActivity {
 
                         holder.txtTitle.setText(s.getAdTitle());
                         ///holder.txtDesc.setText(s.getLocation());
-                        Picasso.get().load(s.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+                        RequestOptions options = new RequestOptions()
+                                .centerCrop()
+                                .placeholder(R.drawable.not_found)
+                                .error(R.drawable.not_found);
+                        Glide.with(ContactActivity.this).load(s.getAdImage1()).apply(options).into(holder.image);
+
+                        //Picasso.get().load(s.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
 
 
                     }
@@ -555,9 +596,8 @@ public class ContactActivity extends AppCompatActivity {
                     public void onClick(View view) {
 
 
-                        Intent intent = new Intent(ContactActivity.this,AdViewActivity.class);
-
-                        intent.putExtra("adId",model.getAdsId().toString());
+                        Intent intent = new Intent(ContactActivity.this, ChatActivity.class);
+                        intent.putExtra("servicerId",model.getServicerId().toString());
                         startActivity(intent);
 
 

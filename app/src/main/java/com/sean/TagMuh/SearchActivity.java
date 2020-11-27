@@ -20,11 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +53,10 @@ public class SearchActivity extends AppCompatActivity {
     boolean search =false;
 
     String uuid,type;
+
+
+    ImageButton imEnvalop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +73,7 @@ public class SearchActivity extends AppCompatActivity {
         tvSearch = (ClearableEditText) findViewById(R.id.tvSearch);
 
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
+        imEnvalop = (ImageButton)findViewById(R.id.imEnvalop);
 
 
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("", R.drawable.bar_allad, R.color.gray);
@@ -164,7 +172,7 @@ public class SearchActivity extends AppCompatActivity {
 
                         search = true;
 
-                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext.toUpperCase()).endAt(searchtext.toLowerCase()+ "\uf8ff");
+                        Query query = FirebaseDatabase.getInstance().getReference().child("Servicer").child("Ads").orderByChild("adTitle").startAt(searchtext).endAt(searchtext+ "\uf8ff");
                         adapter = null;
                         fetch(query);
 
@@ -186,6 +194,15 @@ public class SearchActivity extends AppCompatActivity {
 
 
 
+        imEnvalop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(SearchActivity.this,AdminAdsListActivity.class);
+                startActivity(intent);
+
+            }
+        });
     }
 
 
@@ -243,7 +260,14 @@ public class SearchActivity extends AppCompatActivity {
                 holder.setTxtTitle(model.getAdTitle());
                 holder.setTxtDesc(model.getAdDescription());
 
-                Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
+
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.not_found)
+                        .error(R.drawable.not_found);
+                Glide.with(SearchActivity.this).load(model.getAdImage1()).apply(options).into(holder.image);
+
+                //Picasso.get().load(model.getAdImage1()).placeholder(R.drawable.not_found).error(R.drawable.not_found).fit().centerCrop().config(Bitmap.Config.RGB_565).into(holder.image);
 
 
 
