@@ -4,6 +4,16 @@
 
 **TagMuh** is an on-demand service app designed to connect customers with professionals for various services, similar to platforms like UrbanClap. The app allows users to search for services, hire professionals, chat with them, and manage their profiles. It also provides two distinct modes: one for **service providers** (professionals) and another for **customers** (users seeking services).
 
+- [Download APK from APKPure](https://apkpure.com/tagmuh/com.sean.tagmuh)
+- [Download on Google Play](https://play.google.com/store/apps/details?id=com.sean.tagmuh)
+
+## Screenshots
+
+- ![Image 1](screen-2.png)
+- ![Screenshot 2](screen-3.png)
+- ![Screenshot 3](screen-1.png)
+
+ 
 Service providers can view their clients, manage chats, and receive notifications, while customers can browse profiles, chat with providers, and hire them directly for services. Built with **Android**, **Firebase**, and **XML**, the app ensures seamless communication, secure transactions, and real-time notifications.
 
 ## Features
