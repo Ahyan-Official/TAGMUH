@@ -10,8 +10,8 @@
 ## Screenshots
 
 - ![Image 1](screen-2.png)
-- ![Screenshot 2](screen-3.png)
-- ![Screenshot 3](screen-1.png)
+- ![Image 2](screen-3.png)
+
 
  
 Service providers can view their clients, manage chats, and receive notifications, while customers can browse profiles, chat with providers, and hire them directly for services. Built with **Android**, **Firebase**, and **XML**, the app ensures seamless communication, secure transactions, and real-time notifications.
